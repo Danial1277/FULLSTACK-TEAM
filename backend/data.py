@@ -13,10 +13,10 @@ TEAM_MEMBERS = [
         "skills": ["Python", "FastAPI", "Flask", "SQL Server", "Networking"],
     },
     {
-        "id": "member2",
-        "name": "Имя Фамилия",
+        "id": "tolegen",
+        "name": "Даниал Толеген",
         "role": "Backend Developer",
-        "bio": "Краткое описание: чем занимался в проекте, стек технологий.",
+        "bio": "Тимлид проекта",
         "photo": "/images/member2.jpg",
         "skills": ["Python", "Flask", "REST API"],
     },
