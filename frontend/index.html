@@ -3,55 +3,47 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Одностраничный сайт с вкладками</title>
+    <title>FULLSTACK-TEAM — Профили команды</title>
     <link rel="stylesheet" href="styles.css">
 </head>
 <body>
 
     <div class="container">
-        <h1>Профили / Вкладки</h1>
+        <!-- Заголовок команды (подтягивается с бэкенда) -->
+        <header class="team-header">
+            <h1 id="team-name">Загрузка команды...</h1>
+            <p id="team-desc">Подождите, идет загрузка данных</p>
+        </header>
 
-        <!-- Навигация по вкладкам -->
-        <div class="tabs-nav">
-            <button class="tab-btn active" data-tab="tab1">Вкладка 1</button>
-            <button class="tab-btn" data-tab="tab2">Вкладка 2</button>
-            <button class="tab-btn" data-tab="tab3">Вкладка 3</button>
-            <button class="tab-btn" data-tab="tab4">Вкладка 4</button>
-            <button class="tab-btn" data-tab="tab5">Вкладка 5</button>
+        <!-- Навигация по вкладкам участников -->
+        <div class="tabs-nav" id="tabs-nav">
+            <!-- Кнопки вкладок генерируются динамически через JS -->
         </div>
 
-        <!-- Контент вкладок -->
+        <!-- Контент профиля участника -->
         <div class="tab-content">
-            <h2 id="current-tab-title">Данные вкладки 1</h2>
-
-            <!-- Форма отправки -->
-            <form id="data-form">
-                <div class="form-group">
-                    <label for="name">Имя / Заголовок:</label>
-                    <input type="text" id="name" name="name" placeholder="Введите имя">
+            <div class="profile-card">
+                <div class="profile-photo-container">
+                    <img id="member-photo" src="" alt="Фото участника" style="display: none;">
+                    <div id="no-photo" class="no-photo" style="display: none;">Нет фото</div>
                 </div>
+                
+                <div class="profile-info">
+                    <h2 id="member-name">Имя участника</h2>
+                    <span id="member-role" class="badge">Роль</span>
+                    
+                    <div class="section-block">
+                        <h3>О себе:</h3>
+                        <p id="member-bio">Описание отсутствует...</p>
+                    </div>
 
-                <div class="form-group">
-                    <label for="bio">Описание / О себе:</label>
-                    <textarea id="bio" name="bio" rows="4" placeholder="Введите описание"></textarea>
+                    <div class="section-block">
+                        <h3>Навыки и стек:</h3>
+                        <div id="member-skills" class="skills-container">
+                            <!-- Теги навыков -->
+                        </div>
+                    </div>
                 </div>
-
-                <div class="form-group">
-                    <label for="photo">Загрузить фото:</label>
-                    <input type="file" id="photo" accept="image/*">
-                </div>
-
-                <button type="submit" class="save-btn">Сохранить</button>
-            </form>
-
-            <!-- Предпросмотр сохраненных данных -->
-            <div class="preview-section">
-                <h3>Сохраненные данные:</h3>
-                <div id="preview-photo-container">
-                    <img id="preview-photo" src="" alt="Фото пока не загружено" style="display: none; max-width: 200px; border-radius: 8px;">
-                </div>
-                <p><strong>Имя:</strong> <span id="preview-name">--</span></p>
-                <p><strong>Описание:</strong> <span id="preview-bio">--</span></p>
             </div>
         </div>
     </div>
