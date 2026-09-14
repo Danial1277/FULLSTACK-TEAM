@@ -30,7 +30,7 @@ TEAM_MEMBERS = [
     },
     {
         "id": "member4",
-        "name": "Имя Фамилия",
+        "name": "Nargiz Shurenova",
         "role": "Frontend Developer",
         "bio": "Краткое описание: чем занимался в проекте, стек технологий.",
         "photo": "/images/member4.jpg",
