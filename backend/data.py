@@ -1,44 +1,43 @@
+from fastapi import APIRouter, HTTPException
+from pydantic import BaseModel
+from data import TEAM_INFO, TEAM_MEMBERS
+
+router = APIRouter()
 
 
-TEAM_MEMBERS = [
-    {
-        "id": "danial",
-        "name": "Даниал",
-        "role": "Backend Developer",
-        "bio": "Учусь в AIU (Astana IT University). Стажировался в АО «Казахтелеком» "
-               "(сетевая диагностика, обработка инцидентов), работаю с "
-               "Flask/FastAPI, T-SQL, Python. Вне учёбы слушаю западную музыку "
-               "(Kanye West и похожее) и играю на гитаре.",
-        "photo": "/images/danial.jpg",
-        "skills": ["Python", "FastAPI", "Flask", "SQL Server", "Networking"],
-    },
-    {
-        "id": "tolegen",
-        "name": "Даниал Толеген",
-        "role": "Backend Developer",
-        "bio": "Тимлид проекта",
-        "photo": "/images/member2.jpg",
-        "skills": ["Python", "Flask", "REST API"],
-    },
-    {
-        "id": "member3",
-        "name": "Sato Bigballs",
-        "role": "Frontend Developer",
-        "bio": "Занимаюсь дизайном сайта",
-        "photo": "/images/member3.jpg",
-        "skills": ["HTML", "CSS", "JavaScript"],
-    },
-    {
-        "id": "member4",
-        "name": "Nargiz Shurenova",
-        "role": "Frontend Developer",
-        "bio": "Краткое описание: чем занимался в проекте, стек технологий.",
-        "photo": "/images/member4.jpg",
-        "skills": ["JavaScript", "UI/UX"],
-    },
-]
+class ContactMessage(BaseModel):
+    name: str
+    message: str
 
-TEAM_INFO = {
-    "name": "FULLSTACK-TEAM",
-    "description": "Команда из 4 человек: 2 фронтенд-разработчика, 2 бэкенд-разработчика.",
-}
+
+@router.get("/team")
+def get_team():
+    """Отдаёт данные всех участников — для 4 личных вкладок."""
+    return TEAM_MEMBERS
+
+
+@router.get("/team/{member_id}")
+def get_member(member_id: str):
+    """Отдаёт данные одного участника по id."""
+    member = next((m for m in TEAM_MEMBERS if m["id"] == member_id), None)
+    if not member:
+        raise HTTPException(status_code=404, detail="Участник не найден")
+    return member
+
+
+@router.get("/team-info")
+def get_team_info():
+    """Отдаёт общую информацию о команде — для 5-й вкладки."""
+    return TEAM_INFO
+
+
+@router.post("/contact", status_code=201)
+def contact(payload: ContactMessage):
+    """Принимает сообщение из формы обратной связи."""
+    name = payload.name.strip()
+    message = payload.message.strip()
+    if not name or not message:
+        raise HTTPException(status_code=400, detail="Заполните имя и сообщение")
+    with open("messages.log", "a", encoding="utf-8") as f:
+        f.write(f"{name}: {message}\n")
+    return {"status": "ok"}
