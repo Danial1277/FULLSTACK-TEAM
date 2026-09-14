@@ -1,0 +1,61 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Одностраничный сайт с вкладками</title>
+    <link rel="stylesheet" href="styles.css">
+</head>
+<body>
+
+    <div class="container">
+        <h1>Профили / Вкладки</h1>
+
+        <!-- Навигация по вкладкам -->
+        <div class="tabs-nav">
+            <button class="tab-btn active" data-tab="tab1">Вкладка 1</button>
+            <button class="tab-btn" data-tab="tab2">Вкладка 2</button>
+            <button class="tab-btn" data-tab="tab3">Вкладка 3</button>
+            <button class="tab-btn" data-tab="tab4">Вкладка 4</button>
+            <button class="tab-btn" data-tab="tab5">Вкладка 5</button>
+        </div>
+
+        <!-- Контент вкладок -->
+        <div class="tab-content">
+            <h2 id="current-tab-title">Данные вкладки 1</h2>
+
+            <!-- Форма отправки -->
+            <form id="data-form">
+                <div class="form-group">
+                    <label for="name">Имя / Заголовок:</label>
+                    <input type="text" id="name" name="name" placeholder="Введите имя">
+                </div>
+
+                <div class="form-group">
+                    <label for="bio">Описание / О себе:</label>
+                    <textarea id="bio" name="bio" rows="4" placeholder="Введите описание"></textarea>
+                </div>
+
+                <div class="form-group">
+                    <label for="photo">Загрузить фото:</label>
+                    <input type="file" id="photo" accept="image/*">
+                </div>
+
+                <button type="submit" class="save-btn">Сохранить</button>
+            </form>
+
+            <!-- Предпросмотр сохраненных данных -->
+            <div class="preview-section">
+                <h3>Сохраненные данные:</h3>
+                <div id="preview-photo-container">
+                    <img id="preview-photo" src="" alt="Фото пока не загружено" style="display: none; max-width: 200px; border-radius: 8px;">
+                </div>
+                <p><strong>Имя:</strong> <span id="preview-name">--</span></p>
+                <p><strong>Описание:</strong> <span id="preview-bio">--</span></p>
+            </div>
+        </div>
+    </div>
+
+    <script src="app.js"></script>
+</body>
+</html>
