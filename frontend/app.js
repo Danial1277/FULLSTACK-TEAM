@@ -1,92 +1,116 @@
 const API_BASE_URL = 'http://127.0.0.1:8000'
-let activeTab = 'tab1'
 
 // Элементы DOM
-const tabButtons = document.querySelectorAll('.tab-btn')
-const tabTitle = document.getElementById('current-tab-title')
-const form = document.getElementById('data-form')
-const nameInput = document.getElementById('name')
-const bioInput = document.getElementById('bio')
-const photoInput = document.getElementById('photo')
+const teamNameEl = document.getElementById('team-name')
+const teamDescEl = document.getElementById('team-desc')
+const tabsNavContainer = document.getElementById('tabs-nav')
 
-const previewName = document.getElementById('preview-name')
-const previewBio = document.getElementById('preview-bio')
-const previewPhoto = document.getElementById('preview-photo')
+const memberNameEl = document.getElementById('member-name')
+const memberRoleEl = document.getElementById('member-role')
+const memberBioEl = document.getElementById('member-bio')
+const memberPhotoEl = document.getElementById('member-photo')
+const noPhotoEl = document.getElementById('no-photo')
+const memberSkillsEl = document.getElementById('member-skills')
 
-// Переключение вкладок
-tabButtons.forEach(btn => {
-	btn.addEventListener('click', e => {
-		tabButtons.forEach(b => b.classList.remove('active'))
-		e.target.classList.add('active')
+let membersData = []
 
-		activeTab = e.target.dataset.tab
-		tabTitle.textContent = `Данные ${e.target.textContent}`
-
-		// Очищаем инпут файла
-		photoInput.value = ''
-
-		// Загружаем данные активной вкладки
-		loadTabData(activeTab)
-	})
-})
-
-// Загрузка данных с сервера
-async function loadTabData(tabId) {
+// Инициализация приложения
+async function initApp() {
 	try {
-		const response = await fetch(`${API_BASE_URL}/api/tabs/${tabId}`)
-		if (!response.ok) throw new Error('Ошибка загрузки')
+		// 1. Получаем общую информацию о команде
+		const teamResponse = await fetch(`${API_BASE_URL}/api/team`)
+		if (teamResponse.ok) {
+			const teamInfo = await teamResponse.json()
+			teamNameEl.textContent = teamInfo.name
+			teamDescEl.textContent = teamInfo.description
+		}
 
-		const data = await response.json()
+		// 2. Получаем список всех участников
+		const membersResponse = await fetch(`${API_BASE_URL}/api/members`)
+		if (!membersResponse.ok) throw new Error('Не удалось загрузить участников')
 
-		// Заполняем форму
-		nameInput.value = data.name || ''
-		bioInput.value = data.bio || ''
+		membersData = await membersResponse.json()
 
-		// Обновляем превью
-		previewName.textContent = data.name || 'Не указано'
-		previewBio.textContent = data.bio || 'Не указано'
+		// 3. Рендерим кнопки вкладок на основе полученных данных
+		renderTabs(membersData)
 
-		if (data.photo) {
-			previewPhoto.src = `${API_BASE_URL}${data.photo}`
-			previewPhoto.style.display = 'block'
-		} else {
-			previewPhoto.style.display = 'none'
+		// 4. Показываем первого участника по умолчанию
+		if (membersData.length > 0) {
+			displayMember(membersData[0])
 		}
 	} catch (err) {
-		console.error('Ошибка:', err)
+		console.error('Ошибка подключения к бэкенду:', err)
+		teamNameEl.textContent = 'Ошибка загрузки'
+		teamDescEl.textContent = 'Убедитесь, что FastAPI сервер запущен.'
 	}
 }
 
-// Сохранение данных на сервер
-form.addEventListener('submit', async e => {
-	e.preventDefault()
+// Создание кнопок вкладок динамически
+function renderTabs(members) {
+	tabsNavContainer.innerHTML = ''
 
-	const formData = new FormData()
-	formData.append('name', nameInput.value)
-	formData.append('bio', bioInput.value)
+	members.forEach((member, index) => {
+		const btn = document.createElement('button')
+		btn.classList.add('tab-btn')
+		if (index === 0) btn.classList.add('active')
 
-	if (photoInput.files[0]) {
-		formData.append('photo', photoInput.files[0])
-	}
+		// Название кнопки — имя участника или его роль
+		btn.textContent = member.name.split(' ')[0] // Берем первое слово (имя) для компактности на вкладке
+		btn.dataset.id = member.id
 
-	try {
-		const response = await fetch(`${API_BASE_URL}/api/tabs/${activeTab}`, {
-			method: 'POST',
-			body: formData,
+		// Обработчик клика по вкладке
+		btn.addEventListener('click', e => {
+			document
+				.querySelectorAll('.tab-btn')
+				.forEach(b => b.classList.remove('active'))
+			e.target.classList.add('active')
+
+			// Находим выбранного участника и отображаем его
+			const selectedMember = members.find(m => m.id === e.target.dataset.id)
+			if (selectedMember) {
+				displayMember(selectedMember)
+			}
 		})
 
-		if (!response.ok) throw new Error('Ошибка сохранения')
+		tabsNavContainer.appendChild(btn)
+	})
+}
 
-		const result = await response.json()
-		alert('Данные сохранены!')
+// Отображение данных участника в блоке профиля
+function displayMember(member) {
+	memberNameEl.textContent = member.name
+	memberRoleEl.textContent = member.role
+	memberBioEl.textContent = member.bio || 'Информация пока не добавлена.'
 
-		// Обновляем отображение
-		loadTabData(activeTab)
-	} catch (err) {
-		console.error('Ошибка:', err)
-		alert('Произошла ошибка при сохранении.')
+	// Обработка фотографии
+	if (member.photo) {
+		// Проверяем, абсолютный ли путь или относительный
+		const photoUrl = member.photo.startsWith('http')
+			? member.photo
+			: `${API_BASE_URL}${member.photo}`
+
+		memberPhotoEl.src = photoUrl
+		memberPhotoEl.style.display = 'block'
+		noPhotoEl.style.display = 'none'
+	} else {
+		memberPhotoEl.style.display = 'none'
+		noPhotoEl.style.display = 'flex'
 	}
-})
 
-// Первоначальная загрузка
-loadTabData(activeTab)
+	// Рендерим навыки (скиллы)
+	memberSkillsEl.innerHTML = ''
+	if (member.skills && member.skills.length > 0) {
+		member.skills.forEach(skill => {
+			const tag = document.createElement('span')
+			tag.classList.add('skill-tag')
+			tag.textContent = skill
+			memberSkillsEl.appendChild(tag)
+		})
+	} else {
+		memberSkillsEl.innerHTML =
+			'<span style="color: #a0aec0; font-size: 14px;">Не указаны</span>'
+	}
+}
+
+// Запуск при загрузке страницы
+initApp()
