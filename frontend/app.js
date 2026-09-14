@@ -1,116 +1,133 @@
 const API_BASE_URL = 'http://127.0.0.1:8000'
 
-// Элементы DOM
-const teamNameEl = document.getElementById('team-name')
-const teamDescEl = document.getElementById('team-desc')
-const tabsNavContainer = document.getElementById('tabs-nav')
+const sidebarList = document.getElementById('sidebar-list')
+const panel = document.getElementById('panel')
+const appPath = document.getElementById('app-path')
 
-const memberNameEl = document.getElementById('member-name')
-const memberRoleEl = document.getElementById('member-role')
-const memberBioEl = document.getElementById('member-bio')
-const memberPhotoEl = document.getElementById('member-photo')
-const noPhotoEl = document.getElementById('no-photo')
-const memberSkillsEl = document.getElementById('member-skills')
+let members = []
 
-let membersData = []
+init()
 
-// Инициализация приложения
-async function initApp() {
+async function init() {
 	try {
-		// 1. Получаем общую информацию о команде
-		const teamResponse = await fetch(`${API_BASE_URL}/api/team`)
-		if (teamResponse.ok) {
-			const teamInfo = await teamResponse.json()
-			teamNameEl.textContent = teamInfo.name
-			teamDescEl.textContent = teamInfo.description
+		const [teamRes, membersRes] = await Promise.all([
+			fetch(`${API_BASE_URL}/api/team`),
+			fetch(`${API_BASE_URL}/api/members`),
+		])
+
+		if (teamRes.ok) {
+			const team = await teamRes.json()
+			appPath.textContent = `${team.name || 'team'} / участники`
 		}
 
-		// 2. Получаем список всех участников
-		const membersResponse = await fetch(`${API_BASE_URL}/api/members`)
-		if (!membersResponse.ok) throw new Error('Не удалось загрузить участников')
+		if (!membersRes.ok) throw new Error('Не удалось загрузить участников')
+		members = await membersRes.json()
 
-		membersData = await membersResponse.json()
-
-		// 3. Рендерим кнопки вкладок на основе полученных данных
-		renderTabs(membersData)
-
-		// 4. Показываем первого участника по умолчанию
-		if (membersData.length > 0) {
-			displayMember(membersData[0])
+		if (!members.length) {
+			panel.innerHTML = `<p class="panel__error">Список участников пуст.</p>`
+			return
 		}
+
+		renderSidebar()
+		showMember(members[0].id)
 	} catch (err) {
-		console.error('Ошибка подключения к бэкенду:', err)
-		teamNameEl.textContent = 'Ошибка загрузки'
-		teamDescEl.textContent = 'Убедитесь, что FastAPI сервер запущен.'
+		console.error(err)
+		panel.innerHTML = `
+            <p class="panel__error">
+                Не удалось подключиться к серверу по адресу ${API_BASE_URL}.<br>
+                Проверьте, что бэкенд (uvicorn) запущен.
+            </p>`
 	}
 }
 
-// Создание кнопок вкладок динамически
-function renderTabs(members) {
-	tabsNavContainer.innerHTML = ''
-
+function renderSidebar() {
+	sidebarList.innerHTML = ''
 	members.forEach((member, index) => {
 		const btn = document.createElement('button')
-		btn.classList.add('tab-btn')
-		if (index === 0) btn.classList.add('active')
-
-		// Название кнопки — имя участника или его роль
-		btn.textContent = member.name.split(' ')[0] // Берем первое слово (имя) для компактности на вкладке
+		btn.className = 'member-btn' + (index === 0 ? ' active' : '')
+		btn.type = 'button'
 		btn.dataset.id = member.id
 
-		// Обработчик клика по вкладке
-		btn.addEventListener('click', e => {
-			document
-				.querySelectorAll('.tab-btn')
-				.forEach(b => b.classList.remove('active'))
-			e.target.classList.add('active')
+		const dot = document.createElement('span')
+		dot.className = 'member-btn__dot ' + roleDotClass(member.role)
 
-			// Находим выбранного участника и отображаем его
-			const selectedMember = members.find(m => m.id === e.target.dataset.id)
-			if (selectedMember) {
-				displayMember(selectedMember)
-			}
+		const name = document.createElement('span')
+		name.className = 'member-btn__name'
+		name.textContent = member.name || `Участник ${index + 1}`
+
+		btn.appendChild(dot)
+		btn.appendChild(name)
+
+		btn.addEventListener('click', () => {
+			document
+				.querySelectorAll('.member-btn')
+				.forEach(b => b.classList.remove('active'))
+			btn.classList.add('active')
+			showMember(member.id)
 		})
 
-		tabsNavContainer.appendChild(btn)
+		sidebarList.appendChild(btn)
 	})
 }
 
-// Отображение данных участника в блоке профиля
-function displayMember(member) {
-	memberNameEl.textContent = member.name
-	memberRoleEl.textContent = member.role
-	memberBioEl.textContent = member.bio || 'Информация пока не добавлена.'
+function showMember(memberId) {
+	const member = members.find(m => m.id === memberId)
+	if (!member) return
 
-	// Обработка фотографии
-	if (member.photo) {
-		// Проверяем, абсолютный ли путь или относительный
-		const photoUrl = member.photo.startsWith('http')
+	const photoUrl = member.photo
+		? member.photo.startsWith('http')
 			? member.photo
 			: `${API_BASE_URL}${member.photo}`
+		: ''
 
-		memberPhotoEl.src = photoUrl
-		memberPhotoEl.style.display = 'block'
-		noPhotoEl.style.display = 'none'
-	} else {
-		memberPhotoEl.style.display = 'none'
-		noPhotoEl.style.display = 'flex'
-	}
+	const badgeClass = roleBadgeClass(member.role)
 
-	// Рендерим навыки (скиллы)
-	memberSkillsEl.innerHTML = ''
-	if (member.skills && member.skills.length > 0) {
-		member.skills.forEach(skill => {
-			const tag = document.createElement('span')
-			tag.classList.add('skill-tag')
-			tag.textContent = skill
-			memberSkillsEl.appendChild(tag)
-		})
-	} else {
-		memberSkillsEl.innerHTML =
-			'<span style="color: #a0aec0; font-size: 14px;">Не указаны</span>'
-	}
+	const stackHtml =
+		member.skills && member.skills.length
+			? `
+            <div class="panel__stack-label">стек</div>
+            <ul class="panel__stack">
+                ${member.skills.map(s => `<li>${escapeHtml(s)}</li>`).join('')}
+            </ul>`
+			: ''
+
+	panel.innerHTML = `
+        <div class="panel__tabbar">
+            <span class="panel__filename">${escapeHtml(member.id)}.member</span>
+            <span class="panel__badge ${badgeClass}">${escapeHtml(member.role || '')}</span>
+        </div>
+        <div class="panel__body">
+            <img class="panel__photo" src="${photoUrl}" alt="${escapeHtml(member.name || '')}"
+                 onerror="this.style.opacity=0.25; this.alt='Фото недоступно';">
+            <div class="panel__info">
+                <h2 class="panel__name">${escapeHtml(member.name || '')}</h2>
+                <p class="panel__bio">${escapeHtml(member.bio || '')}</p>
+                ${stackHtml}
+            </div>
+        </div>
+    `
 }
 
-// Запуск при загрузке страницы
-initApp()
+function roleDotClass(role) {
+	const r = (role || '').toLowerCase()
+	if (r.includes('frontend') || r.includes('фронт'))
+		return 'member-btn__dot--frontend'
+	if (r.includes('backend') || r.includes('бэк') || r.includes('бек'))
+		return 'member-btn__dot--backend'
+	return ''
+}
+
+function roleBadgeClass(role) {
+	const r = (role || '').toLowerCase()
+	if (r.includes('frontend') || r.includes('фронт'))
+		return 'panel__badge--frontend'
+	if (r.includes('backend') || r.includes('бэк') || r.includes('бек'))
+		return 'panel__badge--backend'
+	return 'panel__badge--neutral'
+}
+
+function escapeHtml(str) {
+	const div = document.createElement('div')
+	div.textContent = str
+	return div.innerHTML
+}
