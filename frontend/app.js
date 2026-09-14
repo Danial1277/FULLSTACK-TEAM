@@ -1,104 +1,118 @@
-document.addEventListener('DOMContentLoaded', () => {
-	const tabsNav = document.getElementById('tabsNav')
-	const tabContent = document.getElementById('tabContent')
+// ======= ДАННЫЕ УЧАСТНИКОВ (отредактируйте под себя) =======
+const team = {
+	sato: {
+		initials: 'С',
+		name: 'Сато',
+		role: 'Участник проекта',
+		bio: 'Отвечает за свою часть Python-проекта. Здесь можно рассказать подробнее: чем занимается, какие задачи решает в команде, интересы в программировании.',
+		tags: ['Python', 'Командная работа'],
+	},
+	nargiz: {
+		initials: 'Н',
+		name: 'Наргиз',
+		role: 'Участница проекта',
+		bio: 'Отвечает за свою часть Python-проекта. Здесь можно рассказать подробнее: чем занимается, какие задачи решает в команде, интересы в программировании.',
+		tags: ['Python', 'Командная работа'],
+	},
+	danialt: {
+		initials: 'ДТ',
+		name: 'Даниал Т',
+		role: 'Участник проекта',
+		bio: 'Отвечает за свою часть Python-проекта. Здесь можно рассказать подробнее: чем занимается, какие задачи решает в команде, интересы в программировании.',
+		tags: ['Python', 'Командная работа'],
+	},
+	danialn: {
+		initials: 'ДН',
+		name: 'Даниал Н',
+		role: 'Участник проекта',
+		bio: 'Отвечает за свою часть Python-проекта. Здесь можно рассказать подробнее: чем занимается, какие задачи решает в команде, интересы в программировании.',
+		tags: ['Python', 'Командная работа'],
+	},
+}
 
-	let teamMembers = []
-	let teamInfo = {}
-
-	async function fetchData() {
-		try {
-			// Запрашиваем эндпоинты бэкенда
-			const membersRes = await fetch('/team')
-			const infoRes = await fetch('/team-info')
-
-			if (!membersRes.ok || !infoRes.ok) {
-				throw new Error(
-					`Ошибка ответа сервера: ${membersRes.status} / ${infoRes.status}`,
-				)
-			}
-
-			teamMembers = await membersRes.json()
-			teamInfo = await infoRes.json()
-
-			renderTabs()
-			if (teamMembers.length > 0) {
-				switchTab(0)
-			}
-		} catch (error) {
-			console.error('Детали ошибки:', error)
-			tabContent.innerHTML = `
-        <div style="color: #dc2626; padding: 20px; text-align: center;">
-          <h3>Не удалось загрузить данные</h3>
-          <p style="margin-top: 8px;">${error.message}</p>
-          <p style="font-size: 13px; color: #6b7280; margin-top: 10px;">
-            Убедитесь, что сервер запущен через <b>python main.py</b> и вы заходите по адресу <b>http://127.0.0.1:8000</b>
-          </p>
-        </div>
-      `
-		}
-	}
-
-	function renderTabs() {
-		tabsNav.innerHTML = ''
-
-		// Вкладки 1-4 (Участники)
-		teamMembers.forEach((member, index) => {
-			const btn = document.createElement('button')
-			btn.className = 'tab-btn'
-			btn.textContent = member.name.split(' ')[0]
-			btn.addEventListener('click', () => switchTab(index))
-			tabsNav.appendChild(btn)
-		})
-
-		// Вкладка 5 (О команде)
-		const teamBtn = document.createElement('button')
-		teamBtn.className = 'tab-btn'
-		teamBtn.textContent = 'О команде'
-		teamBtn.addEventListener('click', () => switchTab(teamMembers.length))
-		tabsNav.appendChild(teamBtn)
-	}
-
-	function switchTab(index) {
-		const buttons = tabsNav.querySelectorAll('.tab-btn')
-		buttons.forEach((btn, idx) => {
-			btn.classList.toggle('active', idx === index)
-		})
-
-		if (index === teamMembers.length) {
-			renderTeamInfo()
-		} else {
-			renderMemberInfo(teamMembers[index])
-		}
-	}
-
-	function renderMemberInfo(member) {
-		const skillsHtml = member.skills
-			? member.skills
-					.map(skill => `<span class="skill-tag">${skill}</span>`)
-					.join('')
-			: ''
-
-		tabContent.innerHTML = `
-      <div class="profile-card">
-        <img src="${member.photo}" alt="${member.name}" class="profile-photo" onerror="this.src='https://via.placeholder.com/140'">
-        <div class="profile-info">
-          <h2>${member.name}</h2>
-          <span class="role">${member.role}</span>
-          <p class="bio">${member.bio}</p>
-          <div class="skills">${skillsHtml}</div>
-        </div>
-      </div>
-    `
-	}
-
-	function renderTeamInfo() {
-		tabContent.innerHTML = `
+// ======= ГЕНЕРАЦИЯ HTML ДЛЯ ВКЛАДКИ "О ГРУППЕ" =======
+function renderTeamPanel() {
+	const cards = Object.keys(team)
+		.map(key => {
+			const m = team[key]
+			return `
       <div class="team-card">
-        <h2>${teamInfo.name}</h2>
-        <p>${teamInfo.description}</p>
+        <div class="team-card__avatar">${m.initials}</div>
+        <div class="team-card__name">${m.name}</div>
+        <div class="team-card__role">${m.role}</div>
       </div>
     `
-	}
+		})
+		.join('')
 
-	fetchData()
+	return `
+    <div class="panel active" id="panel-team">
+      <div class="section-title">О нашей группе</div>
+      <p class="section-desc">
+        Мы — команда из четырёх человек, работающая над совместным проектом на Python.
+        Каждый из нас отвечает за свою часть работы, но результат мы создаём вместе.
+        На вкладках выше можно узнать подробнее про каждого участника.
+      </p>
+      <div class="team-grid">
+        ${cards}
+      </div>
+    </div>
+  `
+}
+
+// ======= ГЕНЕРАЦИЯ HTML ДЛЯ ПРОФИЛЯ УЧАСТНИКА =======
+function renderProfilePanel(key) {
+	const m = team[key]
+	const tags = m.tags.map(t => `<span class="tag">${t}</span>`).join('')
+
+	return `
+    <div class="panel" id="panel-${key}">
+      <div class="profile">
+        <div class="profile__avatar">${m.initials}</div>
+        <div class="profile__info">
+          <div class="profile__name">${m.name}</div>
+          <div class="profile__role">${m.role}</div>
+          <p class="profile__bio">${m.bio}</p>
+          <div class="profile__tags">${tags}</div>
+        </div>
+      </div>
+    </div>
+  `
+}
+
+// ======= РЕНДЕР ВСЕГО КОНТЕНТА =======
+function renderContent() {
+	const content = document.getElementById('content')
+	let html = renderTeamPanel()
+	Object.keys(team).forEach(key => {
+		html += renderProfilePanel(key)
+	})
+	content.innerHTML = html
+}
+
+// ======= ПЕРЕКЛЮЧЕНИЕ ВКЛАДОК =======
+function setupTabs() {
+	const buttons = document.querySelectorAll('.tab-btn')
+	buttons.forEach(btn => {
+		btn.addEventListener('click', () => {
+			const tab = btn.getAttribute('data-tab')
+
+			// Кнопки
+			buttons.forEach(b => b.classList.remove('active'))
+			btn.classList.add('active')
+
+			// Панели
+			document
+				.querySelectorAll('.panel')
+				.forEach(p => p.classList.remove('active'))
+			const target = document.getElementById(`panel-${tab}`)
+			if (target) target.classList.add('active')
+		})
+	})
+}
+
+// ======= ИНИЦИАЛИЗАЦИЯ =======
+document.addEventListener('DOMContentLoaded', () => {
+	renderContent()
+	setupTabs()
 })
