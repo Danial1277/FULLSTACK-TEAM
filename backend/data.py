@@ -22,9 +22,9 @@ TEAM_MEMBERS = [
     },
     {
         "id": "member3",
-        "name": "Имя Фамилия",
+        "name": "Sato Bigballs",
         "role": "Frontend Developer",
-        "bio": "Краткое описание: чем занимался в проекте, стек технологий.",
+        "bio": "Занимаюсь дизайном сайта",
         "photo": "/images/member3.jpg",
         "skills": ["HTML", "CSS", "JavaScript"],
     },
