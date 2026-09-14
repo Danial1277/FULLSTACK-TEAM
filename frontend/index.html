@@ -3,48 +3,31 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>FULLSTACK-TEAM — Профили команды</title>
+    <title>Команда · профили участников</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&family=JetBrains+Mono:wght@400;500;600&display=swap" rel="stylesheet">
     <link rel="stylesheet" href="styles.css">
 </head>
 <body>
 
-    <div class="container">
-        <!-- Заголовок команды (подтягивается с бэкенда) -->
-        <header class="team-header">
-            <h1 id="team-name">Загрузка команды...</h1>
-            <p id="team-desc">Подождите, идет загрузка данных</p>
-        </header>
-
-        <!-- Навигация по вкладкам участников -->
-        <div class="tabs-nav" id="tabs-nav">
-            <!-- Кнопки вкладок генерируются динамически через JS -->
+    <div class="app">
+        <div class="app__titlebar">
+            <div class="app__dots" aria-hidden="true"><span></span><span></span><span></span></div>
+            <div class="app__path" id="app-path">team / участники</div>
         </div>
 
-        <!-- Контент профиля участника -->
-        <div class="tab-content">
-            <div class="profile-card">
-                <div class="profile-photo-container">
-                    <img id="member-photo" src="" alt="Фото участника" style="display: none;">
-                    <div id="no-photo" class="no-photo" style="display: none;">Нет фото</div>
+        <div class="app__body">
+            <nav class="sidebar" aria-label="Участники команды">
+                <div class="sidebar__label">Участники</div>
+                <div class="sidebar__list" id="sidebar-list">
+                    <!-- Кнопки участников генерируются автоматически -->
                 </div>
-                
-                <div class="profile-info">
-                    <h2 id="member-name">Имя участника</h2>
-                    <span id="member-role" class="badge">Роль</span>
-                    
-                    <div class="section-block">
-                        <h3>О себе:</h3>
-                        <p id="member-bio">Описание отсутствует...</p>
-                    </div>
+            </nav>
 
-                    <div class="section-block">
-                        <h3>Навыки и стек:</h3>
-                        <div id="member-skills" class="skills-container">
-                            <!-- Теги навыков -->
-                        </div>
-                    </div>
-                </div>
-            </div>
+            <main class="panel" id="panel">
+                <div class="panel__state">Открываем карточки участников…</div>
+            </main>
         </div>
     </div>
 
