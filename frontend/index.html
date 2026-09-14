@@ -1,53 +1,25 @@
 <!DOCTYPE html>
 <html lang="ru">
 <head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>FULLSTACK-TEAM — Профили команды</title>
-    <link rel="stylesheet" href="styles.css">
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Команда FULLSTACK-TEAM</title>
+  <link rel="stylesheet" href="style.css">
 </head>
 <body>
 
-    <div class="container">
-        <!-- Заголовок команды (подтягивается с бэкенда) -->
-        <header class="team-header">
-            <h1 id="team-name">Загрузка команды...</h1>
-            <p id="team-desc">Подождите, идет загрузка данных</p>
-        </header>
+  <div class="container">
+    <!-- Навигация по 5 вкладкам -->
+    <nav class="tabs-nav" id="tabsNav">
+      <!-- Динамически заполняется из JS -->
+    </nav>
 
-        <!-- Навигация по вкладкам участников -->
-        <div class="tabs-nav" id="tabs-nav">
-            <!-- Кнопки вкладок генерируются динамически через JS -->
-        </div>
+    <!-- Контент активной вкладки -->
+    <main class="tab-content" id="tabContent">
+      <p class="loading">Загрузка данных...</p>
+    </main>
+  </div>
 
-        <!-- Контент профиля участника -->
-        <div class="tab-content">
-            <div class="profile-card">
-                <div class="profile-photo-container">
-                    <img id="member-photo" src="" alt="Фото участника" style="display: none;">
-                    <div id="no-photo" class="no-photo" style="display: none;">Нет фото</div>
-                </div>
-                
-                <div class="profile-info">
-                    <h2 id="member-name">Имя участника</h2>
-                    <span id="member-role" class="badge">Роль</span>
-                    
-                    <div class="section-block">
-                        <h3>О себе:</h3>
-                        <p id="member-bio">Описание отсутствует...</p>
-                    </div>
-
-                    <div class="section-block">
-                        <h3>Навыки и стек:</h3>
-                        <div id="member-skills" class="skills-container">
-                            <!-- Теги навыков -->
-                        </div>
-                    </div>
-                </div>
-            </div>
-        </div>
-    </div>
-
-    <script src="app.js"></script>
+  <script src="script.js"></script>
 </body>
 </html>

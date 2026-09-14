@@ -1,20 +1,43 @@
 from fastapi import APIRouter, HTTPException
+from pydantic import BaseModel
+from data import TEAM_INFO, TEAM_MEMBERS
 
-router = APIRouter(prefix="/api")
+router = APIRouter()
 
-# Пример данных
-members_data = [
-    {"id": 1, "name": "Участник 1", "role": "Backend", "bio": "Описание 1"},
-    {"id": 2, "name": "Участник 2", "role": "Backend", "bio": "Описание 2"},
-    {"id": 3, "name": "Участник 3", "role": "Frontend", "bio": "Описание 3"},
-    {"id": 4, "name": "Участник 4", "role": "Frontend", "bio": "Описание 4"},
-    {"id": 5, "name": "Участник 5", "role": "Lead", "bio": "Описание 5"},
-]
+
+class ContactMessage(BaseModel):
+    name: str
+    message: str
+
 
 @router.get("/team")
-async def get_team():
-    return {"team_name": "FULLSTACK-TEAM", "count": len(members_data)}
+def get_team():
+    """Отдаёт данные всех участников — для 4 личных вкладок."""
+    return TEAM_MEMBERS
 
-@router.get("/members")
-async def get_members():
-    return members_data
+
+@router.get("/team/{member_id}")
+def get_member(member_id: str):
+    """Отдаёт данные одного участника по id."""
+    member = next((m for m in TEAM_MEMBERS if m["id"] == member_id), None)
+    if not member:
+        raise HTTPException(status_code=404, detail="Участник не найден")
+    return member
+
+
+@router.get("/team-info")
+def get_team_info():
+    """Отдаёт общую информацию о команде — для 5-й вкладки."""
+    return TEAM_INFO
+
+
+@router.post("/contact", status_code=201)
+def contact(payload: ContactMessage):
+    """Принимает сообщение из формы обратной связи."""
+    name = payload.name.strip()
+    message = payload.message.strip()
+    if not name or not message:
+        raise HTTPException(status_code=400, detail="Заполните имя и сообщение")
+    with open("messages.log", "a", encoding="utf-8") as f:
+        f.write(f"{name}: {message}\n")
+    return {"status": "ok"}
