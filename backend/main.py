@@ -23,7 +23,7 @@ os.makedirs("uploads", exist_ok=True)
 app.mount("/uploads", StaticFiles(directory="uploads"), name="uploads")
 
 # Подключаем API маршруты из api.py
-app.include_router(api_router)
+app.include_router(api_router, prefix="/api")
 
 # Монтируем фронтенд (HTML, CSS, JS)
 # ВАЖНО: подключается последним, чтобы не перекрывать /api и /uploads

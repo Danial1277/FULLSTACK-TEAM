@@ -14,22 +14,34 @@ class ContactMessage(BaseModel):
 
 @router.get("/team")
 def get_team():
-    """Отдаёт данные всех участников — для 4 личных вкладок."""
+    """Отдаёт общую информацию о команде."""
+    return TEAM_INFO
+
+
+@router.get("/members")
+def get_members():
+    """Отдаёт данные всех участников."""
     return TEAM_MEMBERS
 
 
-@router.get("/team/{member_id}")
+@router.get("/members/{member_id}")
 def get_member(member_id: str):
-    """Отдаёт данные одного участника по id (member1..member4)."""
+    """Отдаёт данные одного участника."""
     member = next((m for m in TEAM_MEMBERS if m["id"] == member_id), None)
     if not member:
         raise HTTPException(status_code=404, detail="Участник не найден")
     return member
 
 
+@router.get("/team/{member_id}")
+def get_member_legacy(member_id: str):
+    """Совместимость со старыми клиентами."""
+    return get_member(member_id)
+
+
 @router.get("/team-info")
 def get_team_info():
-    """Отдаёт общую информацию о команде — для 5-й вкладки."""
+    """Отдаёт общую информацию о команде."""
     return TEAM_INFO
 
 
