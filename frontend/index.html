@@ -3,21 +3,34 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>Команда FULLSTACK-TEAM</title>
+  <title>Наш Python-проект</title>
   <link rel="stylesheet" href="style.css">
 </head>
 <body>
 
-  <div class="container">
-    <!-- Навигация: 5 кликабельных вкладок -->
-    <nav class="tabs-nav" id="tabsNav"></nav>
+  <header class="header">
+    <div class="header__inner">
+      <div class="header__logo">🐍 Python Team</div>
+      <p class="header__subtitle">Проект нашей группы</p>
+    </div>
+  </header>
 
-    <!-- Контент активной вкладки -->
-    <main class="tab-content" id="tabContent">
-      <p class="loading">Загрузка данных...</p>
-    </main>
-  </div>
+  <nav class="tabs" id="tabs">
+    <button class="tab-btn active" data-tab="team">О группе</button>
+    <button class="tab-btn" data-tab="sato">Сато</button>
+    <button class="tab-btn" data-tab="nargiz">Наргиз</button>
+    <button class="tab-btn" data-tab="danialt">Даниал Т</button>
+    <button class="tab-btn" data-tab="danialn">Даниал Н</button>
+  </nav>
 
-  <script src="script.js"></script>
+  <main class="content" id="content">
+    <!-- Контент вкладок будет подставлен через app.js -->
+  </main>
+
+  <footer class="footer">
+    <p>&copy; 2026 Python Team. Сделано с любовью и небольшим количеством багов 🐛</p>
+  </footer>
+
+  <script src="app.js"></script>
 </body>
 </html>
