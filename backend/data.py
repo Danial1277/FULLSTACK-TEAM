@@ -1,44 +1,59 @@
+# Хранение данных участников и общего описания команды
 
-
-TEAM_MEMBERS = [
+MEMBERS = [
     {
-        "id": "danial",
-        "name": "Даниал",
-        "role": "Backend Developer",
-        "bio": "Учусь в AIU (Astana IT University). Стажировался в АО «Казахтелеком» "
-               "(сетевая диагностика, обработка инцидентов), работаю с "
-               "Flask/FastAPI, T-SQL, Python. Вне учёбы слушаю западную музыку "
-               "(Kanye West и похожее) и играю на гитаре.",
-        "photo": "/images/danial.jpg",
-        "skills": ["Python", "FastAPI", "Flask", "SQL Server", "Networking"],
-    },
-    {
-        "id": "tolegen",
-        "name": "Даниал Толеген",
-        "role": "Backend Developer",
-        "bio": "Тимлид проекта",
-        "photo": "/images/member2.jpg",
-        "skills": ["Python", "Flask", "REST API"],
-    },
-    {
-        "id": "member3",
-        "name": "Sato Bigballs",
+        "id": "satybaldy",
+        "name": "Сатыбалды",
         "role": "Frontend Developer",
-        "bio": "Занимаюсь дизайном сайта",
-        "photo": "/images/member3.jpg",
-        "skills": ["HTML", "CSS", "JavaScript"],
+        "c": "fe",
+        "does": ["HTML, CSS, JavaScript", "Создание интерфейсов", "Адаптивная вёрстка"],
+        "tags": ["HTML", "CSS", "JavaScript"]
     },
     {
-        "id": "member4",
-        "name": "Nargiz Shurenova",
-        "role": "Frontend Developer",
-        "bio": "Краткое описание: чем занимался в проекте, стек технологий.",
-        "photo": "/images/member4.jpg",
-        "skills": ["JavaScript", "UI/UX"],
+        "id": "danial-t",
+        "name": "Даниал Т",
+        "role": "Backend Developer and Team Lead",
+        "c": "be",
+        "does": ["Серверная часть", "API", "Базы данных"],
+        "tags": ["API", "Базы данных", "Логика"]
     },
+    {
+        "id": "nargiz",
+        "name": "Наргиз",
+        "role": "Frontend Developer",
+        "c": "fe",
+        "does": ["HTML, CSS, JavaScript", "UI/UX", "Создание интерфейсов"],
+        "tags": ["HTML", "CSS", "JavaScript"]
+    },
+    {
+        "id": "danial-n",
+        "name": "Даниал Н",
+        "role": "Backend Developer",
+        "c": "be",
+        "does": ["Серверная часть", "API", "Серверная логика"],
+        "tags": ["API", "Базы данных", "Логика"]
+    }
 ]
 
 TEAM_INFO = {
-    "name": "FULLSTACK-TEAM",
-    "description": "Команда из 4 человек: 2 фронтенд-разработчика, 2 бэкенд-разработчика.",
+    "title": "Frontend × Backend",
+    "structure": {
+        "frontend": ["Сатыбалды", "Наргиз"],
+        "backend": ["Даниал Т", "Даниал Н"]
+    },
+    "technologies": ["HTML", "CSS", "JavaScript", "API", "Базы данных"],
+    "roles_stats": {
+        "frontend_count": 2,
+        "backend_count": 2
+    },
+    "work_principles": [
+        "Параллельная разработка",
+        "Согласование через API",
+        "Каждый отвечает за своё"
+    ],
+    "strengths": [
+        "Чёткое разделение ролей",
+        "Внимание к UX",
+        "Аккуратная работа с данными"
+    ]
 }
