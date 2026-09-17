@@ -48,4 +48,4 @@ section.active{display:block}
 
 .bar b{display:block;height:100%;background:var(--c)}
 
-@media (max-width:700px){.grid,.grid2{grid-template-columns:1fr}.hero{flex-direction:column;text-align:center}
+@media (max-width:700px){.grid,.grid2{grid-template-columns:1fr}.hero{flex-direction:column;text-align:center}}
