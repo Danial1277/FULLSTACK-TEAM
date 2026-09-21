@@ -1,29 +1,22 @@
 from fastapi import APIRouter, HTTPException
+from data import MEMBERS, TEAM_INFO
 
-from data import MEMBERS, MEMBERS_BY_ID, TEAM_INFO
-from models import Category, Member, TeamInfo
+router = APIRouter(prefix="/api")
 
-router = APIRouter(prefix="/api", tags=["team"])
+@router.get("/members")
+def get_members():
+    """Получить список всех участников"""
+    return MEMBERS
 
-
-@router.get("/members", response_model=list[Member])
-def get_members(category: Category | None = None):
-    """Список участников. Необязательный фильтр: ?category=frontend или ?category=backend"""
-    if category is None:
-        return MEMBERS
-    return [member for member in MEMBERS if member["category"] == category]
-
-
-@router.get("/members/{member_id}", response_model=Member)
+@router.get("/members/{member_id}")
 def get_member(member_id: str):
-    """Данные конкретного участника по ID"""
-    member = MEMBERS_BY_ID.get(member_id)
-    if member is None:
-        raise HTTPException(status_code=404, detail="Участник не найден")
-    return member
+    """Получить данные конкретного участника по ID"""
+    for member in MEMBERS:
+        if member["id"] == member_id:
+            return member
+    raise HTTPException(status_code=404, detail="Member not found")
 
-
-@router.get("/team", response_model=TeamInfo)
+@router.get("/team")
 def get_team_info():
-    """Общая информация о команде"""
+    """Получить общую информацию о команде"""
     return TEAM_INFO
