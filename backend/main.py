@@ -1,4 +1,5 @@
 from pathlib import Path
+
 from fastapi import FastAPI
 from fastapi.staticfiles import StaticFiles
 
@@ -12,7 +13,7 @@ app = FastAPI(title="Team Backend API")
 # API подключаем первым, чтобы /api/* не перехватывался статикой
 app.include_router(api_router)
 
-# html=True: на "/" автоматически отдаётся index.html, остальные файлы (css/js) — как есть
+# html=True: на "/" автоматически отдаётся index.html
 app.mount("/", StaticFiles(directory=FRONTEND_DIR, html=True), name="frontend")
 
 if __name__ == "__main__":
