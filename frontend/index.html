@@ -1,64 +1,50 @@
 <!DOCTYPE html>
-
 <html lang="ru">
 
 <head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Наша команда — разработчики</title>
 
-<meta charset="UTF-8">
-
-<meta name="viewport" content="width=device-width, initial-scale=1.0">
-
-<title>Наша команда — разработчики</title>
-
-<link rel="preconnect" href="https://fonts.googleapis.com">
-
-<link href="https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@600;700&family=Inter:wght@400;500&family=JetBrains+Mono:wght@400;500&display=swap" rel="stylesheet">
-
-<link rel="stylesheet" href="style.css">
-
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@600;700&family=Inter:wght@400;500&family=JetBrains+Mono:wght@400;500&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="style.css">
 </head>
 
 <body>
+  <div class="bg-grid" aria-hidden="true"></div>
 
-<div class="bg-grid" aria-hidden="true"></div>
+  <header class="site-header">
+    <div class="header-inner">
+      <span class="brand"><span class="dot" aria-hidden="true"></span><span class="brand-text">Команда</span></span>
+      <nav class="tabs-nav" id="tabsNav" role="tablist" aria-label="Разделы"></nav>
+      <span class="status-chip"><span class="status-dot" aria-hidden="true"></span><span class="status-text">Подключение…</span></span>
+    </div>
+  </header>
 
+  <main class="site-main" id="tabContent" role="tabpanel"></main>
 
+  <!-- Практика DOM: Task 1 и Task 2 (логика в tasks.js) -->
+  <section class="tasks" aria-labelledby="tasksTitle">
+    <h2 id="tasksTitle">Практика DOM</h2>
 
-<header class="site-header">
+    <h3 id="greeting">Заголовок</h3>
+    <div class="old-element">Меня удалят</div>
 
-<div class="header-inner">
+    <div id="box" class="box">Элемент для Task 2</div>
+    <button id="toggleBtn" class="btn" type="button">Переключить active</button>
+    <p id="classInfo" class="class-info"></p>
+  </section>
 
-<span class="brand"> <span class="dot"></span></span>
+  <footer class="site-footer">
+    <p class="footer-title"></p>
+    <p class="muted footer-desc"></p>
+    <p class="status-chip"><span class="status-dot" aria-hidden="true"></span><span class="status-text">Подключение…</span></p>
+  </footer>
 
-<nav class="tabs-nav" id="tabsNav"></nav>
-
-<span class="status-chip"><span class="status-dot"></span></span>
-
-</div>
-
-</header>
-
-
-
-<main class="site-main" id="tabContent"></main>
-
-
-
-<footer class="site-footer">
-
-<p></p>
-
-<p class="muted"></p>
-
-<p class="status-chip"><span class="status-dot"></span></p>
-
-</footer>
-
-
-
-<script src="app.js"></script>
-
+  <script src="app.js"></script>
+  <script src="tasks.js"></script>
 </body>
 
 </html>
-
