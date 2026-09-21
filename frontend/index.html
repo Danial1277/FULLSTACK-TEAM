@@ -8,33 +8,51 @@
 </head>
 <body>
 
-    <!-- Шапка и навигационные вкладки -->
+    <!-- Шапка с вкладками -->
     <header>
         <nav></nav>
     </header>
 
-    <!-- Основной контент (карточки участников и вкладка команды) -->
-    <main id="tabContent"></main>
-
-    <!-- Интерактивный блок для выполнения Task 1 и Task 2 (DOM-манипуляции) -->
-    <div id="tasks-container" style="max-width: 900px; margin: 40px auto; padding: 20px; border-top: 1px solid #333;">
-        <h2 style="margin-bottom: 15px;">Практика DOM (Tasks)</h2>
+    <!-- Основной контент (карточки, команда и таски) -->
+    <main id="tabContent">
+        <!-- Шаблоны вкладок для Task 1 и Task 2 -->
         
-        <!-- Элементы для Task 1 -->
-        <div id="my-element" style="margin-bottom: 10px; font-weight: bold;">Старый текст элемента</div>
-        <div class="old-element" style="color: #ff6b6b; margin-bottom: 10px;">Этот элемент будет удален скриптом</div>
+        <!-- Вкладка Task 1 -->
+        <section id="tab-task1">
+            <h1>Task 1. Работа с DOM</h1>
+            <div class="card">
+                <p class="label">Управление элементом "Привет, мир!"</p>
+                <div style="display: flex; gap: 10px; margin-bottom: 15px; flex-wrap: wrap;">
+                    <button id="btn-create" class="tab-btn active">Создать / Восстановить</button>
+                    <button id="btn-change" class="tab-btn">Изменить текст</button>
+                    <button id="btn-delete" class="tab-btn">Удалить элемент</button>
+                </div>
+                <div id="hello-container" style="padding: 10px; border: 1px dashed #555; border-radius: 6px; min-height: 40px;">
+                    <!-- Сюда динамически добавляется элемент -->
+                </div>
+            </div>
 
-        <!-- Демо-карточка для Task 2 -->
-        <div id="demo-card" class="card" style="margin-top: 15px; cursor: pointer; padding: 15px; border: 1px solid #444; border-radius: 8px;">
-            <p style="margin: 0;">Нажми на меня, чтобы переключить класс active (Task 2)</p>
-        </div>
-    </div>
+            <div class="card" style="margin-top: 20px;">
+                <p class="label">Изменяемый абзац (кликни для смены цвета)</p>
+                <p id="toggle-paragraph" style="cursor: pointer; user-select: none; padding: 10px; border: 1px solid #444; border-radius: 6px;">
+                    Это изменяемый абзац. Кликни на меня!
+                </p>
+            </div>
+        </section>
 
-    <!-- Основная логика работы с API и переключением вкладок -->
+        <!-- Вкладка Task 2 -->
+        <section id="tab-task2">
+            <h1>Task 2. Управление классами</h1>
+            <div class="card">
+                <p class="label">Интерактивная карточка</p>
+                <div id="demo-card" class="card" style="cursor: pointer; padding: 20px; border: 1px solid #555; border-radius: 8px;">
+                    <p style="margin: 0;">Нажми на меня, чтобы переключить класс <code>active</code></p>
+                </div>
+            </div>
+        </section>
+    </main>
+
     <script src="app.js"></script>
-    
-    <!-- Скрипт с учебными задачами по DOM -->
     <script src="tasks.js"></script>
-
 </body>
 </html>
