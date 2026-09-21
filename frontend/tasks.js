@@ -12,7 +12,7 @@ document.addEventListener('DOMContentLoaded', () => {
 	// 1. Создание элемента "Привет, мир!"
 	function createHelloElement() {
 		if (!helloContainer) return
-		if (document.getElementById('my-element')) return // Проверка на дубликаты
+		if (document.getElementById('my-element')) return
 
 		const newElem = document.createElement('div')
 		newElem.id = 'my-element'
@@ -70,7 +70,7 @@ document.addEventListener('DOMContentLoaded', () => {
 		})
 	}
 
-	// 5. Добавление слова/элемента в конец <body> при каждом клике
+	// 5. Добавление элемента в конец <body> при каждом клике
 	const task1Card = document.querySelector('#tab-task1 .card')
 	if (task1Card) {
 		const btnAppendBody = document.createElement('button')
@@ -98,23 +98,29 @@ document.addEventListener('DOMContentLoaded', () => {
 		// 1. Переключение класса active
 		element.classList.toggle('active')
 
-		// 2. Проверка активного состояния
+		// 2. Проверка состояния
 		const isActive = element.classList.contains('active')
 
-		// 3. Изменение текста/слов внутри карточки при нажатии
+		// 3. Находим тег с текстом
 		const paragraph = element.querySelector('p') || element
+
+		// 4. Прямое изменение текста и цвета
 		if (isActive) {
-			paragraph.textContent =
-				'Класс ACTIVE АКТИВИРОВАН! (Цвет и стиль изменены)'
+			paragraph.textContent = 'Класс ACTIVE АКТИВИРОВАН! (Цвет изменен)'
+			element.style.backgroundColor = '#1d3557'
+			element.style.borderColor = '#45e0c4'
+			element.style.color = '#ffffff'
 		} else {
 			paragraph.textContent = 'Класс active ВЫКЛЮЧЕН. Нажми, чтобы включить'
+			element.style.backgroundColor = ''
+			element.style.borderColor = ''
+			element.style.color = ''
 		}
 
-		// 4. Получение списка текущих классов
+		// 5. Вывод списка классов
 		const currentClasses = element.className || 'Классов нет'
 		console.log('Текущий список классов:', currentClasses)
 
-		// 5. Вывод информации о классах под карточкой
 		let infoP = element.nextElementSibling
 		if (!infoP || !infoP.classList.contains('class-info-p')) {
 			infoP = document.createElement('p')
@@ -129,13 +135,12 @@ document.addEventListener('DOMContentLoaded', () => {
 
 	const demoCard = document.getElementById('demo-card')
 	if (demoCard) {
-		// Назначаем обработчик нажатия
 		demoCard.onclick = e => {
 			e.stopPropagation()
 			manageClasses(demoCard)
 		}
 
-		// Начальный вывод списка классов без переключения состояния
+		// Начальная инициализация подписи под карточкой
 		let infoP = demoCard.nextElementSibling
 		if (!infoP || !infoP.classList.contains('class-info-p')) {
 			infoP = document.createElement('p')
