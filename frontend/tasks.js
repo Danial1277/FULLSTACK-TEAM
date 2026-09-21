@@ -1,47 +1,77 @@
-// Заворачиваем всё в функцию, которая точно выполнится после загрузки DOM
-window.addEventListener('DOMContentLoaded', () => {
-	console.log('tasks.js загружен и выполняется!')
-
+document.addEventListener('DOMContentLoaded', () => {
 	// ==========================================
-	// Task 1. Работа с элементами DOM
+	// Task 1. Динамическое управление DOM
 	// ==========================================
 
-	// 1. Изменение текста элемента по ID
-	const elementById = document.getElementById('my-element')
-	if (elementById) {
-		elementById.textContent = 'Привет, мир!'
+	const helloContainer = document.getElementById('hello-container')
+	const btnCreate = document.getElementById('btn-create')
+	const btnChange = document.getElementById('btn-change')
+	const btnDelete = document.getElementById('btn-delete')
+	const toggleParagraph = document.getElementById('toggle-paragraph')
+
+	// 1. Создать элемент
+	function createHelloElement() {
+		if (!helloContainer) return
+		if (document.getElementById('my-element')) return // Элемент уже существует
+
+		const newElem = document.createElement('div')
+		newElem.id = 'my-element'
+		newElem.textContent = 'Исходный текст элемента'
+		newElem.style.fontSize = '18px'
+		newElem.style.fontWeight = 'bold'
+		helloContainer.appendChild(newElem)
 	}
 
-	// 2. Создание <div> с классом new-div и текстом "Я новый элемент"
-	const newDiv = document.createElement('div')
-	newDiv.classList.add('new-div')
-	newDiv.textContent = 'Я новый элемент'
-	document.body.appendChild(newDiv)
-
-	// 3. Удаление элемента с классом old-element
-	const oldElement = document.querySelector('.old-element')
-	if (oldElement) {
-		oldElement.remove()
+	// 2. Изменить текст на "Привет, мир!"
+	if (btnChange) {
+		btnChange.addEventListener('click', () => {
+			const elem = document.getElementById('my-element')
+			if (elem) {
+				elem.textContent = 'Привет, мир!'
+			} else {
+				alert('Сначала создайте элемент!')
+			}
+		})
 	}
 
-	// 4. Создание <p> с текстом "Это изменяемый абзац."
-	const dynamicParagraph = document.createElement('p')
-	dynamicParagraph.textContent = 'Это изменяемый абзац.'
-	dynamicParagraph.style.cursor = 'pointer'
-	dynamicParagraph.style.marginTop = '10px'
+	// 3. Удалить элемент
+	if (btnDelete) {
+		btnDelete.addEventListener('click', () => {
+			const elem = document.getElementById('my-element')
+			if (elem) {
+				elem.remove()
+			}
+		})
+	}
 
-	// 5. При клике меняем цвет текста и размер шрифта
-	dynamicParagraph.addEventListener('click', () => {
-		dynamicParagraph.style.color = '#7c8cff'
-		dynamicParagraph.style.fontSize = '20px'
-	})
+	// Кнопка создания
+	if (btnCreate) {
+		btnCreate.addEventListener('click', createHelloElement)
+	}
 
-	const tasksContainer =
-		document.getElementById('tasks-container') || document.body
-	tasksContainer.appendChild(dynamicParagraph)
+	// Авто-создание элемента при старте
+	createHelloElement()
+
+	// 4. Переключение цвета и размера шрифта абзаца при повторных кликах (Toggle)
+	let isChanged = false
+	if (toggleParagraph) {
+		toggleParagraph.addEventListener('click', () => {
+			isChanged = !isChanged // переключаем состояние
+
+			if (isChanged) {
+				toggleParagraph.style.color = '#7c8cff'
+				toggleParagraph.style.fontSize = '22px'
+				toggleParagraph.style.fontWeight = 'bold'
+			} else {
+				toggleParagraph.style.color = '' // возвращаем исходный цвет
+				toggleParagraph.style.fontSize = '' // возвращаем исходный размер
+				toggleParagraph.style.fontWeight = ''
+			}
+		})
+	}
 
 	// ==========================================
-	// Task 2. Управление классами элементов
+	// Task 2. Управление классами
 	// ==========================================
 
 	function manageClasses(element) {
@@ -50,30 +80,29 @@ window.addEventListener('DOMContentLoaded', () => {
 		// Переключаем класс active
 		element.classList.toggle('active')
 
-		// Получаем список классов
-		const classListText = element.className || 'Классов нет'
+		// Получаем текущий список классов
+		const currentClasses = element.className || 'Классов нет'
 
-		console.log('Список классов элемента:', classListText)
+		// Вывод в консоль
+		console.log('Список классов элемента:', currentClasses)
 
+		// Ищем или создаем тег <p> рядом для вывода
 		let infoP = element.nextElementSibling
 		if (!infoP || !infoP.classList.contains('class-info-p')) {
 			infoP = document.createElement('p')
 			infoP.classList.add('class-info-p')
-			infoP.style.marginTop = '8px'
+			infoP.style.marginTop = '10px'
 			element.after(infoP)
 		}
 
-		infoP.textContent = `Список классов: ${classListText}`
+		infoP.textContent = `Список классов: ${currentClasses}`
 	}
 
 	const demoCard = document.getElementById('demo-card')
 	if (demoCard) {
-		// Навешиваем клик на карточку
 		demoCard.addEventListener('click', () => {
 			manageClasses(demoCard)
 		})
-
-		// Первичный вызов для отображения начального состояния
 		manageClasses(demoCard)
 	}
 })
