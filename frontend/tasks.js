@@ -1,53 +1,108 @@
-'use strict'
+document.addEventListener('DOMContentLoaded', () => {
+	// ==========================================
+	// Task 1. Динамическое управление DOM
+	// ==========================================
 
-/* ===================== Task 1 ===================== */
+	const helloContainer = document.getElementById('hello-container')
+	const btnCreate = document.getElementById('btn-create')
+	const btnChange = document.getElementById('btn-change')
+	const btnDelete = document.getElementById('btn-delete')
+	const toggleParagraph = document.getElementById('toggle-paragraph')
 
-// 1. Найти элемент по ID и изменить его текст
-const greeting = document.getElementById('greeting')
-greeting.textContent = 'Привет, мир!'
+	// 1. Создать элемент
+	function createHelloElement() {
+		if (!helloContainer) return
+		if (document.getElementById('my-element')) return // Элемент уже существует
 
-// 2. Создать <div class="new-div"> и добавить в конец <body>
-const newDiv = document.createElement('div')
-newDiv.className = 'new-div'
-newDiv.textContent = 'Я новый элемент'
-document.body.appendChild(newDiv)
+		const newElem = document.createElement('div')
+		newElem.id = 'my-element'
+		newElem.textContent = 'Исходный текст элемента'
+		newElem.style.fontSize = '18px'
+		newElem.style.fontWeight = 'bold'
+		helloContainer.appendChild(newElem)
+	}
 
-// 3. Удалить элемент с классом old-element
-const oldElement = document.querySelector('.old-element')
-if (oldElement) oldElement.remove()
+	// 2. Изменить текст на "Привет, мир!"
+	if (btnChange) {
+		btnChange.addEventListener('click', () => {
+			const elem = document.getElementById('my-element')
+			if (elem) {
+				elem.textContent = 'Привет, мир!'
+			} else {
+				alert('Сначала создайте элемент!')
+			}
+		})
+	}
 
-// 4. Создать <p>; при клике менять цвет текста и размер шрифта
-const editable = document.createElement('p')
-editable.className = 'click-me'
-editable.textContent = 'Это изменяемый абзац.'
-document.querySelector('.tasks').appendChild(editable)
+	// 3. Удалить элемент
+	if (btnDelete) {
+		btnDelete.addEventListener('click', () => {
+			const elem = document.getElementById('my-element')
+			if (elem) {
+				elem.remove()
+			}
+		})
+	}
 
-const COLORS = ['crimson', 'royalblue', 'seagreen', 'darkorange']
-const SIZES = [16, 20, 26, 32] // px
-let clicks = 0
+	// Кнопка создания
+	if (btnCreate) {
+		btnCreate.addEventListener('click', createHelloElement)
+	}
 
-editable.addEventListener('click', () => {
-	editable.style.color = COLORS[clicks % COLORS.length]
-	editable.style.fontSize = `${SIZES[clicks % SIZES.length]}px`
-	clicks++
+	// Авто-создание элемента при старте
+	createHelloElement()
+
+	// 4. Переключение цвета и размера шрифта абзаца при повторных кликах (Toggle)
+	let isChanged = false
+	if (toggleParagraph) {
+		toggleParagraph.addEventListener('click', () => {
+			isChanged = !isChanged // переключаем состояние
+
+			if (isChanged) {
+				toggleParagraph.style.color = '#7c8cff'
+				toggleParagraph.style.fontSize = '22px'
+				toggleParagraph.style.fontWeight = 'bold'
+			} else {
+				toggleParagraph.style.color = '' // возвращаем исходный цвет
+				toggleParagraph.style.fontSize = '' // возвращаем исходный размер
+				toggleParagraph.style.fontWeight = ''
+			}
+		})
+	}
+
+	// ==========================================
+	// Task 2. Управление классами
+	// ==========================================
+
+	function manageClasses(element) {
+		if (!element) return
+
+		// Переключаем класс active
+		element.classList.toggle('active')
+
+		// Получаем текущий список классов
+		const currentClasses = element.className || 'Классов нет'
+
+		// Вывод в консоль
+		console.log('Список классов элемента:', currentClasses)
+
+		// Ищем или создаем тег <p> рядом для вывода
+		let infoP = element.nextElementSibling
+		if (!infoP || !infoP.classList.contains('class-info-p')) {
+			infoP = document.createElement('p')
+			infoP.classList.add('class-info-p')
+			infoP.style.marginTop = '10px'
+			element.after(infoP)
+		}
+
+		infoP.textContent = `Список классов: ${currentClasses}`
+	}
+
+	const demoCard = document.getElementById('demo-card')
+	if (demoCard) {
+		demoCard.addEventListener('click', () => {
+			manageClasses(demoCard)
+		})
+		manageClasses(demoCard)
+	}
 })
-
-/* ===================== Task 2 ===================== */
-
-const box = document.getElementById('box')
-const classInfo = document.getElementById('classInfo')
-
-// Вывести список всех классов в консоль и в отдельный <p>
-function showClasses() {
-	const classes = Array.from(box.classList)
-	console.log('Классы элемента:', classes)
-	classInfo.textContent = `Классы: ${classes.join(', ') || '(нет)'}`
-}
-
-// Добавить класс active, если его нет, и удалить, если есть
-document.getElementById('toggleBtn').addEventListener('click', () => {
-	box.classList.toggle('active')
-	showClasses()
-})
-
-showClasses()

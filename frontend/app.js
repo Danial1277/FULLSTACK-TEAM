@@ -31,16 +31,33 @@ document.addEventListener('DOMContentLoaded', async () => {
 		const M = await membersRes.json()
 		const teamData = await teamRes.json()
 
-		const tabs = [...M, { id: 'team', name: 'Команда' }]
+		// Все вкладки в шапке
+		const tabs = [
+			...M,
+			{ id: 'team', name: 'Команда' },
+			{ id: 'task1', name: 'Task 1' },
+			{ id: 'task2', name: 'Task 2' },
+		]
+
 		document.querySelector('nav').innerHTML = tabs
 			.map(
 				(t, i) =>
 					`<button class="tab-btn${i ? '' : ' active'}" data-tab="${t.id}">${t.name}</button>`,
 			)
 			.join('')
+
+		// Сохраняем секции Task 1 и Task 2 из HTML
+		const task1Sec = document.getElementById('tab-task1')
+		const task2Sec = document.getElementById('tab-task2')
+
+		// Рендерим динамические секции и возвращаем задачи
 		document.getElementById('tabContent').innerHTML =
 			M.map(memberHTML).join('') + teamHTML(teamData)
 
+		if (task1Sec) document.getElementById('tabContent').appendChild(task1Sec)
+		if (task2Sec) document.getElementById('tabContent').appendChild(task2Sec)
+
+		// Обработка переключения вкладок
 		document.querySelector('nav').onclick = e => {
 			const id = e.target.closest('.tab-btn')?.dataset.tab
 			if (!id) return
@@ -52,6 +69,7 @@ document.addEventListener('DOMContentLoaded', async () => {
 				.forEach(s => s.classList.toggle('active', s.id === 'tab-' + id))
 		}
 
+		// Активируем первую вкладку по умолчанию
 		document.querySelector('nav').firstElementChild.click()
 	} catch (err) {
 		console.error('Ошибка загрузки данных с API:', err)
