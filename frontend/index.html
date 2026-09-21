@@ -1,50 +1,40 @@
 <!DOCTYPE html>
 <html lang="ru">
-
 <head>
-  <meta charset="UTF-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>Наша команда — разработчики</title>
-
-  <link rel="preconnect" href="https://fonts.googleapis.com">
-  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-  <link href="https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@600;700&family=Inter:wght@400;500&family=JetBrains+Mono:wght@400;500&display=swap" rel="stylesheet">
-  <link rel="stylesheet" href="style.css">
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Командный проект | Fullstack Team</title>
+    <link rel="stylesheet" href="style.css">
 </head>
-
 <body>
-  <div class="bg-grid" aria-hidden="true"></div>
 
-  <header class="site-header">
-    <div class="header-inner">
-      <span class="brand"><span class="dot" aria-hidden="true"></span><span class="brand-text">Команда</span></span>
-      <nav class="tabs-nav" id="tabsNav" role="tablist" aria-label="Разделы"></nav>
-      <span class="status-chip"><span class="status-dot" aria-hidden="true"></span><span class="status-text">Подключение…</span></span>
+    <!-- Шапка и навигационные вкладки -->
+    <header>
+        <nav></nav>
+    </header>
+
+    <!-- Основной контент (карточки участников и вкладка команды) -->
+    <main id="tabContent"></main>
+
+    <!-- Интерактивный блок для выполнения Task 1 и Task 2 (DOM-манипуляции) -->
+    <div id="tasks-container" style="max-width: 900px; margin: 40px auto; padding: 20px; border-top: 1px solid #333;">
+        <h2 style="margin-bottom: 15px;">Практика DOM (Tasks)</h2>
+        
+        <!-- Элементы для Task 1 -->
+        <div id="my-element" style="margin-bottom: 10px; font-weight: bold;">Старый текст элемента</div>
+        <div class="old-element" style="color: #ff6b6b; margin-bottom: 10px;">Этот элемент будет удален скриптом</div>
+
+        <!-- Демо-карточка для Task 2 -->
+        <div id="demo-card" class="card" style="margin-top: 15px; cursor: pointer; padding: 15px; border: 1px solid #444; border-radius: 8px;">
+            <p style="margin: 0;">Нажми на меня, чтобы переключить класс active (Task 2)</p>
+        </div>
     </div>
-  </header>
 
-  <main class="site-main" id="tabContent" role="tabpanel"></main>
+    <!-- Основная логика работы с API и переключением вкладок -->
+    <script src="app.js"></script>
+    
+    <!-- Скрипт с учебными задачами по DOM -->
+    <script src="tasks.js"></script>
 
-  <!-- Практика DOM: Task 1 и Task 2 (логика в tasks.js) -->
-  <section class="tasks" aria-labelledby="tasksTitle">
-    <h2 id="tasksTitle">Практика DOM</h2>
-
-    <h3 id="greeting">Заголовок</h3>
-    <div class="old-element">Меня удалят</div>
-
-    <div id="box" class="box">Элемент для Task 2</div>
-    <button id="toggleBtn" class="btn" type="button">Переключить active</button>
-    <p id="classInfo" class="class-info"></p>
-  </section>
-
-  <footer class="site-footer">
-    <p class="footer-title"></p>
-    <p class="muted footer-desc"></p>
-    <p class="status-chip"><span class="status-dot" aria-hidden="true"></span><span class="status-text">Подключение…</span></p>
-  </footer>
-
-  <script src="app.js"></script>
-  <script src="tasks.js"></script>
 </body>
-
 </html>
