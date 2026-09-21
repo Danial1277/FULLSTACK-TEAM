@@ -1,53 +1,79 @@
-'use strict'
+// Заворачиваем всё в функцию, которая точно выполнится после загрузки DOM
+window.addEventListener('DOMContentLoaded', () => {
+	console.log('tasks.js загружен и выполняется!')
 
-/* ===================== Task 1 ===================== */
+	// ==========================================
+	// Task 1. Работа с элементами DOM
+	// ==========================================
 
-// 1. Найти элемент по ID и изменить его текст
-const greeting = document.getElementById('greeting')
-greeting.textContent = 'Привет, мир!'
+	// 1. Изменение текста элемента по ID
+	const elementById = document.getElementById('my-element')
+	if (elementById) {
+		elementById.textContent = 'Привет, мир!'
+	}
 
-// 2. Создать <div class="new-div"> и добавить в конец <body>
-const newDiv = document.createElement('div')
-newDiv.className = 'new-div'
-newDiv.textContent = 'Я новый элемент'
-document.body.appendChild(newDiv)
+	// 2. Создание <div> с классом new-div и текстом "Я новый элемент"
+	const newDiv = document.createElement('div')
+	newDiv.classList.add('new-div')
+	newDiv.textContent = 'Я новый элемент'
+	document.body.appendChild(newDiv)
 
-// 3. Удалить элемент с классом old-element
-const oldElement = document.querySelector('.old-element')
-if (oldElement) oldElement.remove()
+	// 3. Удаление элемента с классом old-element
+	const oldElement = document.querySelector('.old-element')
+	if (oldElement) {
+		oldElement.remove()
+	}
 
-// 4. Создать <p>; при клике менять цвет текста и размер шрифта
-const editable = document.createElement('p')
-editable.className = 'click-me'
-editable.textContent = 'Это изменяемый абзац.'
-document.querySelector('.tasks').appendChild(editable)
+	// 4. Создание <p> с текстом "Это изменяемый абзац."
+	const dynamicParagraph = document.createElement('p')
+	dynamicParagraph.textContent = 'Это изменяемый абзац.'
+	dynamicParagraph.style.cursor = 'pointer'
+	dynamicParagraph.style.marginTop = '10px'
 
-const COLORS = ['crimson', 'royalblue', 'seagreen', 'darkorange']
-const SIZES = [16, 20, 26, 32] // px
-let clicks = 0
+	// 5. При клике меняем цвет текста и размер шрифта
+	dynamicParagraph.addEventListener('click', () => {
+		dynamicParagraph.style.color = '#7c8cff'
+		dynamicParagraph.style.fontSize = '20px'
+	})
 
-editable.addEventListener('click', () => {
-	editable.style.color = COLORS[clicks % COLORS.length]
-	editable.style.fontSize = `${SIZES[clicks % SIZES.length]}px`
-	clicks++
+	const tasksContainer =
+		document.getElementById('tasks-container') || document.body
+	tasksContainer.appendChild(dynamicParagraph)
+
+	// ==========================================
+	// Task 2. Управление классами элементов
+	// ==========================================
+
+	function manageClasses(element) {
+		if (!element) return
+
+		// Переключаем класс active
+		element.classList.toggle('active')
+
+		// Получаем список классов
+		const classListText = element.className || 'Классов нет'
+
+		console.log('Список классов элемента:', classListText)
+
+		let infoP = element.nextElementSibling
+		if (!infoP || !infoP.classList.contains('class-info-p')) {
+			infoP = document.createElement('p')
+			infoP.classList.add('class-info-p')
+			infoP.style.marginTop = '8px'
+			element.after(infoP)
+		}
+
+		infoP.textContent = `Список классов: ${classListText}`
+	}
+
+	const demoCard = document.getElementById('demo-card')
+	if (demoCard) {
+		// Навешиваем клик на карточку
+		demoCard.addEventListener('click', () => {
+			manageClasses(demoCard)
+		})
+
+		// Первичный вызов для отображения начального состояния
+		manageClasses(demoCard)
+	}
 })
-
-/* ===================== Task 2 ===================== */
-
-const box = document.getElementById('box')
-const classInfo = document.getElementById('classInfo')
-
-// Вывести список всех классов в консоль и в отдельный <p>
-function showClasses() {
-	const classes = Array.from(box.classList)
-	console.log('Классы элемента:', classes)
-	classInfo.textContent = `Классы: ${classes.join(', ') || '(нет)'}`
-}
-
-// Добавить класс active, если его нет, и удалить, если есть
-document.getElementById('toggleBtn').addEventListener('click', () => {
-	box.classList.toggle('active')
-	showClasses()
-})
-
-showClasses()
