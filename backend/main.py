@@ -1,13 +1,8 @@
-import os
+from pathlib import Path
 from fastapi import FastAPI
 from fastapi.staticfiles import StaticFiles
-from fastapi.responses import FileResponse
+
 from api import router as api_router
-
-
-
-
-
 
 # Папка frontend лежит рядом с backend
 FRONTEND_DIR = Path(__file__).resolve().parent.parent / "frontend"
