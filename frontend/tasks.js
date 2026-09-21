@@ -1,6 +1,6 @@
 document.addEventListener('DOMContentLoaded', () => {
 	// ==========================================
-	// Task 1. Работа с DOM и манипуляции с <body>
+	// Task 1. Работа с DOM и добавление в <body>
 	// ==========================================
 
 	const helloContainer = document.getElementById('hello-container')
@@ -9,7 +9,7 @@ document.addEventListener('DOMContentLoaded', () => {
 	const btnDelete = document.getElementById('btn-delete')
 	const toggleParagraph = document.getElementById('toggle-paragraph')
 
-	// 1. Создать элемент "Привет, мир!"
+	// 1. Создание элемента "Привет, мир!"
 	function createHelloElement() {
 		if (!helloContainer) return
 		if (document.getElementById('my-element')) return
@@ -22,7 +22,7 @@ document.addEventListener('DOMContentLoaded', () => {
 		helloContainer.appendChild(newElem)
 	}
 
-	// 2. Изменить текст на "Привет, мир!"
+	// 2. Изменение текста элемента на "Привет, мир!"
 	if (btnChange) {
 		btnChange.addEventListener('click', () => {
 			const elem = document.getElementById('my-element')
@@ -34,7 +34,7 @@ document.addEventListener('DOMContentLoaded', () => {
 		})
 	}
 
-	// 3. Удалить элемент
+	// 3. Удаление элемента из DOM
 	if (btnDelete) {
 		btnDelete.addEventListener('click', () => {
 			const elem = document.getElementById('my-element')
@@ -44,19 +44,21 @@ document.addEventListener('DOMContentLoaded', () => {
 		})
 	}
 
+	// Кнопка пересоздания элемента
 	if (btnCreate) {
 		btnCreate.addEventListener('click', createHelloElement)
 	}
 
+	// Инициализация элемента при старте
 	createHelloElement()
 
-	// 4. Переключение цвета и размера абзаца туда и обратно
-	let isChanged = false
+	// 4. Изменяемый абзац: смена цвета и стиля при нажатии туда и обратно
+	let isParagraphChanged = false
 	if (toggleParagraph) {
 		toggleParagraph.addEventListener('click', () => {
-			isChanged = !isChanged
+			isParagraphChanged = !isParagraphChanged
 
-			if (isChanged) {
+			if (isParagraphChanged) {
 				toggleParagraph.style.color = '#7c8cff'
 				toggleParagraph.style.fontSize = '22px'
 				toggleParagraph.style.fontWeight = 'bold'
@@ -74,7 +76,7 @@ document.addEventListener('DOMContentLoaded', () => {
 		const btnAppendBody = document.createElement('button')
 		btnAppendBody.className = 'tab-btn'
 		btnAppendBody.style.marginTop = '15px'
-		btnAppendBody.textContent = 'Добавить "Я новый элемент" в конец <body>'
+		btnAppendBody.textContent = 'Добавить элемент в конец <body>'
 
 		btnAppendBody.addEventListener('click', () => {
 			const newDiv = document.createElement('div')
@@ -87,35 +89,44 @@ document.addEventListener('DOMContentLoaded', () => {
 	}
 
 	// ==========================================
-	// Task 2. Управление классами, цветом и словами
+	// Task 2. Управление классами, смена слов и цвета
 	// ==========================================
 
 	function manageClasses(element) {
 		if (!element) return
 
-		// Переключаем класс active
+		// 1. Переключение класса active
 		element.classList.toggle('active')
 
+		// 2. Проверка состояния
 		const isActive = element.classList.contains('active')
 
-		// Меняем слова и текст внутри элемента
-		const textElement = element.querySelector('p') || element
+		// 3. Находим тег с текстом
+		const paragraph = element.querySelector('p') || element
+
+		// 4. Прямое изменение текста и цвета
 		if (isActive) {
-			textElement.textContent =
-				'Класс ACTIVE АКТИВИРОВАН! (Цвет и стиль изменены)'
+			paragraph.textContent = 'Класс ACTIVE АКТИВИРОВАН! (Цвет изменен)'
+			element.style.backgroundColor = '#1d3557'
+			element.style.borderColor = '#45e0c4'
+			element.style.color = '#ffffff'
 		} else {
-			textElement.textContent = 'Класс active ВЫКЛЮЧЕН. Нажми, чтобы включить'
+			paragraph.textContent = 'Класс active ВЫКЛЮЧЕН. Нажми, чтобы включить'
+			element.style.backgroundColor = ''
+			element.style.borderColor = ''
+			element.style.color = ''
 		}
 
+		// 5. Вывод списка классов
 		const currentClasses = element.className || 'Классов нет'
-
-		console.log('Список классов элемента:', currentClasses)
+		console.log('Текущий список классов:', currentClasses)
 
 		let infoP = element.nextElementSibling
 		if (!infoP || !infoP.classList.contains('class-info-p')) {
 			infoP = document.createElement('p')
 			infoP.classList.add('class-info-p')
 			infoP.style.marginTop = '10px'
+			infoP.style.color = '#888'
 			element.after(infoP)
 		}
 
@@ -124,10 +135,20 @@ document.addEventListener('DOMContentLoaded', () => {
 
 	const demoCard = document.getElementById('demo-card')
 	if (demoCard) {
-		demoCard.addEventListener('click', () => {
+		demoCard.onclick = e => {
+			e.stopPropagation()
 			manageClasses(demoCard)
-		})
+		}
 
-		manageClasses(demoCard)
+		// Начальная инициализация подписи под карточкой
+		let infoP = demoCard.nextElementSibling
+		if (!infoP || !infoP.classList.contains('class-info-p')) {
+			infoP = document.createElement('p')
+			infoP.classList.add('class-info-p')
+			infoP.style.marginTop = '10px'
+			infoP.style.color = '#888'
+			demoCard.after(infoP)
+		}
+		infoP.textContent = `Список классов: ${demoCard.className || 'card'}`
 	}
 })
