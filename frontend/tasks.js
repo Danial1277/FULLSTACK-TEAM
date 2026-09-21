@@ -1,6 +1,6 @@
 document.addEventListener('DOMContentLoaded', () => {
 	// ==========================================
-	// Task 1. Динамическое управление DOM
+	// Task 1. Работа с DOM и манипуляции с <body>
 	// ==========================================
 
 	const helloContainer = document.getElementById('hello-container')
@@ -9,10 +9,10 @@ document.addEventListener('DOMContentLoaded', () => {
 	const btnDelete = document.getElementById('btn-delete')
 	const toggleParagraph = document.getElementById('toggle-paragraph')
 
-	// 1. Создать элемент
+	// 1. Создать элемент "Привет, мир!"
 	function createHelloElement() {
 		if (!helloContainer) return
-		if (document.getElementById('my-element')) return // Элемент уже существует
+		if (document.getElementById('my-element')) return
 
 		const newElem = document.createElement('div')
 		newElem.id = 'my-element'
@@ -44,34 +44,50 @@ document.addEventListener('DOMContentLoaded', () => {
 		})
 	}
 
-	// Кнопка создания
 	if (btnCreate) {
 		btnCreate.addEventListener('click', createHelloElement)
 	}
 
-	// Авто-создание элемента при старте
 	createHelloElement()
 
-	// 4. Переключение цвета и размера шрифта абзаца при повторных кликах (Toggle)
+	// 4. Переключение цвета и размера абзаца туда и обратно
 	let isChanged = false
 	if (toggleParagraph) {
 		toggleParagraph.addEventListener('click', () => {
-			isChanged = !isChanged // переключаем состояние
+			isChanged = !isChanged
 
 			if (isChanged) {
 				toggleParagraph.style.color = '#7c8cff'
 				toggleParagraph.style.fontSize = '22px'
 				toggleParagraph.style.fontWeight = 'bold'
 			} else {
-				toggleParagraph.style.color = '' // возвращаем исходный цвет
-				toggleParagraph.style.fontSize = '' // возвращаем исходный размер
+				toggleParagraph.style.color = ''
+				toggleParagraph.style.fontSize = ''
 				toggleParagraph.style.fontWeight = ''
 			}
 		})
 	}
 
+	// 5. Добавление элемента в конец <body> при каждом клике
+	const task1Card = document.querySelector('#tab-task1 .card')
+	if (task1Card) {
+		const btnAppendBody = document.createElement('button')
+		btnAppendBody.className = 'tab-btn'
+		btnAppendBody.style.marginTop = '15px'
+		btnAppendBody.textContent = 'Добавить "Я новый элемент" в конец <body>'
+
+		btnAppendBody.addEventListener('click', () => {
+			const newDiv = document.createElement('div')
+			newDiv.classList.add('new-div')
+			newDiv.textContent = 'Я новый элемент (добавлен в конец body)'
+			document.body.appendChild(newDiv)
+		})
+
+		task1Card.appendChild(btnAppendBody)
+	}
+
 	// ==========================================
-	// Task 2. Управление классами
+	// Task 2. Управление классами, цветом и словами
 	// ==========================================
 
 	function manageClasses(element) {
@@ -80,13 +96,21 @@ document.addEventListener('DOMContentLoaded', () => {
 		// Переключаем класс active
 		element.classList.toggle('active')
 
-		// Получаем текущий список классов
+		const isActive = element.classList.contains('active')
+
+		// Меняем слова и текст внутри элемента
+		const textElement = element.querySelector('p') || element
+		if (isActive) {
+			textElement.textContent =
+				'Класс ACTIVE АКТИВИРОВАН! (Цвет и стиль изменены)'
+		} else {
+			textElement.textContent = 'Класс active ВЫКЛЮЧЕН. Нажми, чтобы включить'
+		}
+
 		const currentClasses = element.className || 'Классов нет'
 
-		// Вывод в консоль
 		console.log('Список классов элемента:', currentClasses)
 
-		// Ищем или создаем тег <p> рядом для вывода
 		let infoP = element.nextElementSibling
 		if (!infoP || !infoP.classList.contains('class-info-p')) {
 			infoP = document.createElement('p')
@@ -103,6 +127,7 @@ document.addEventListener('DOMContentLoaded', () => {
 		demoCard.addEventListener('click', () => {
 			manageClasses(demoCard)
 		})
+
 		manageClasses(demoCard)
 	}
 })
