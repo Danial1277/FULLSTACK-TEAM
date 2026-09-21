@@ -1,148 +1,64 @@
 <!DOCTYPE html>
+
 <html lang="ru">
+
 <head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Python Team Project</title>
-    <!-- Подключаем стили -->
-    <link rel="stylesheet" href="style.css">
-    <!-- Иконки FontAwesome для красоты -->
-    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
-    <!-- Google Fonts -->
-    <link href="https://fonts.googleapis.com/css2?family=Fira+Code:wght@400;600&family=Inter:wght@300;400;600;800&display=swap" rel="stylesheet">
+
+<meta charset="UTF-8">
+
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+<title>Наша команда — разработчики</title>
+
+<link rel="preconnect" href="https://fonts.googleapis.com">
+
+<link href="https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@600;700&family=Inter:wght@400;500&family=JetBrains+Mono:wght@400;500&display=swap" rel="stylesheet">
+
+<link rel="stylesheet" href="style.css">
+
 </head>
+
 <body>
 
-    <!-- Навигация (Вкладки) -->
-    <header class="header">
-        <div class="logo">
-            <i class="fab fa-python"></i>
-            <span>Python Team</span>
-        </div>
-        <nav class="nav-tabs">
-            <button class="tab-btn active" data-tab="general">
-                <i class="fas fa-home"></i> Общая
-            </button>
-            <button class="tab-btn" data-tab="sato">
-                <i class="fas fa-code"></i> Сато
-            </button>
-            <button class="tab-btn" data-tab="nargiz">
-                <i class="fas fa-database"></i> Наргиз
-            </button>
-            <button class="tab-btn" data-tab="danial-t">
-                <i class="fas fa-terminal"></i> Даниал Т
-            </button>
-            <button class="tab-btn" data-tab="danial-n">
-                <i class="fas fa-server"></i> Даниал Н
-            </button>
-        </nav>
-    </header>
+<div class="bg-grid" aria-hidden="true"></div>
 
-    <!-- Основной контент (Вкладки) -->
-    <main class="content-container">
 
-        <!-- Вкладка 1: Общая -->
-        <section id="general" class="tab-content active">
-            <div class="hero-card">
-                <div class="badge">Командный проект на Python</div>
-                <h1>Добро пожаловать на страницу нашей команды!</h1>
-                <p class="subtitle">Мы — разработчики, объединившие усилия для создания крутых решений на Python.</p>
-                
-                <div class="team-grid">
-                    <div class="team-preview-card" onclick="switchTab('sato')">
-                        <img src="https://images.unsplash.com/photo-1534528741775-53994a69daeb?auto=format&fit=crop&w=300&q=80" alt="Сато">
-                        <h3>Сато</h3>
-                        <span>Team Lead & Backend</span>
-                    </div>
-                    <div class="team-preview-card" onclick="switchTab('nargiz')">
-                        <img src="https://images.unsplash.com/photo-1517841905240-472988babdf9?auto=format&fit=crop&w=300&q=80" alt="Наргиз">
-                        <h3>Наргиз</h3>
-                        <span>Data Analyst & DB</span>
-                    </div>
-                    <div class="team-preview-card" onclick="switchTab('danial-t')">
-                        <img src="https://images.unsplash.com/photo-1507003211169-0a1dd7228f2d?auto=format&fit=crop&w=300&q=80" alt="Даниал Т">
-                        <h3>Даниал Т</h3>
-                        <span>Python Developer</span>
-                    </div>
-                    <div class="team-preview-card" onclick="switchTab('danial-n')">
-                        <img src="https://images.unsplash.com/photo-1500648767791-00dcc994a43e?auto=format&fit=crop&w=300&q=80" alt="Даниал Н">
-                        <span>DevOps & Logic</span>
-                    </div>
-                </div>
-            </div>
-        </section>
 
-        <!-- Вкладка 2: Сато -->
-        <section id="sato" class="tab-content">
-            <div class="profile-card">
-                <div class="profile-image">
-                    <img src="https://images.unsplash.com/photo-1534528741775-53994a69daeb?auto=format&fit=crop&w=500&q=80" alt="Сато">
-                </div>
-                <div class="profile-info">
-                    <h2>Сато</h2>
-                    <span class="role">Team Lead / Backend Developer</span>
-                    <p class="bio">Специализируется на архитектуре приложений, написании надежных бэкенд-сервисов на Python и управлении командными процессами.</p>
-                    <div class="skills">
-                        <span>Python</span><span>FastAPI</span><span>Git</span><span>Architecture</span>
-                    </div>
-                </div>
-            </div>
-        </section>
+<header class="site-header">
 
-        <!-- Вкладка 3: Наргиз -->
-        <section id="nargiz" class="tab-content">
-            <div class="profile-card">
-                <div class="profile-image">
-                    <img src="https://images.unsplash.com/photo-1517841905240-472988babdf9?auto=format&fit=crop&w=500&q=80" alt="Наргиз">
-                </div>
-                <div class="profile-info">
-                    <h2>Наргиз</h2>
-                    <span class="role">Data Analyst / Database Engineer</span>
-                    <p class="bio">Эксперт по работе с данными, проектированию реляционных баз данных, анализу таблиц и визуализации результатов на Python.</p>
-                    <div class="skills">
-                        <span>Python</span><span>Pandas</span><span>SQL</span><span>PostgreSQL</span>
-                    </div>
-                </div>
-            </div>
-        </section>
+<div class="header-inner">
 
-        <!-- Вкладка 4: Даниал Т -->
-        <section id="danial-t" class="tab-content">
-            <div class="profile-card">
-                <div class="profile-image">
-                    <img src="https://images.unsplash.com/photo-1507003211169-0a1dd7228f2d?auto=format&fit=crop&w=500&q=80" alt="Даниал Т">
-                </div>
-                <div class="profile-info">
-                    <h2>Даниал Т</h2>
-                    <span class="role">Python Developer</span>
-                    <p class="bio">Занимается алгоритмической частью проекта, написанием бизнес-логики скриптов и интеграцией сторонних API.</p>
-                    <div class="skills">
-                        <span>Python</span><span>OOP</span><span>REST API</span><span>Algorithms</span>
-                    </div>
-                </div>
-            </div>
-        </section>
+<span class="brand"> <span class="dot"></span></span>
 
-        <!-- Вкладка 5: Даниал Н -->
-        <section id="danial-n" class="tab-content">
-            <div class="profile-card">
-                <div class="profile-image">
-                    <img src="https://images.unsplash.com/photo-1500648767791-00dcc994a43e?auto=format&fit=crop&w=500&q=80" alt="Даниал Н">
-                </div>
-                <div class="profile-info">
-                    <h2>Даниал Н</h2>
-                    <span class="role">Python Developer / System Integrator</span>
-                    <p class="bio">Отвечает за тестирование кода, оптимизацию производительности и автоматизацию рутинных задач внутри программного продукта.</p>
-                    <div class="skills">
-                        <span>Python</span><span>Automation</span><span>Testing</span><span>Linux</span>
-                    </div>
-                </div>
-            </div>
-        </section>
+<nav class="tabs-nav" id="tabsNav"></nav>
 
-    </main>
+<span class="status-chip"><span class="status-dot"></span></span>
 
-    <!-- Подключаем JS -->
-    <script src="app.js"></script>
+</div>
+
+</header>
+
+
+
+<main class="site-main" id="tabContent"></main>
+
+
+
+<footer class="site-footer">
+
+<p></p>
+
+<p class="muted"></p>
+
+<p class="status-chip"><span class="status-dot"></span></p>
+
+</footer>
+
+
+
+<script src="app.js"></script>
+
 </body>
+
 </html>
+

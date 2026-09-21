@@ -1,29 +1,25 @@
 import os
-import uvicorn
-from api import router as api_router
 from fastapi import FastAPI
-from fastapi.middleware.cors import CORSMiddleware
 from fastapi.staticfiles import StaticFiles
+from fastapi.responses import FileResponse
+from api import router as api_router
 
-app = FastAPI(title="Multi-Tab Profile App")
+app = FastAPI(title="Team Backend API")
 
-# Настройка CORS
-app.add_middleware(
-    CORSMiddleware,
-    allow_origins=["*"],
-    allow_credentials=True,
-    allow_methods=["*"],
-    allow_headers=["*"],
-)
-
-os.makedirs("uploads", exist_ok=True)
-app.mount("/uploads", StaticFiles(directory="uploads"), name="uploads")
-
-# Подключаем API роуты
+# Подключаем API
 app.include_router(api_router)
 
-# Подключаем статику фронтенда из подпапки frontend
-app.mount("/", StaticFiles(directory="frontend", html=True), name="frontend")
+# Путь к папке frontend
+FRONTEND_DIR = os.path.join(os.path.dirname(__file__), "..", "frontend")
+
+# Раздача HTML, CSS и JS из корневой директории
+@app.get("/")
+def read_root():
+    return FileResponse(os.path.join(FRONTEND_DIR, "index.html"))
+
+# Раздаём статические файлы напрямую (styles/js)
+app.mount("/", StaticFiles(directory=FRONTEND_DIR), name="frontend")
 
 if __name__ == "__main__":
+    import uvicorn
     uvicorn.run("main:app", host="127.0.0.1", port=8000, reload=True)
