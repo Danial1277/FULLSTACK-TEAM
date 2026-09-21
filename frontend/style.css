@@ -49,3 +49,23 @@ section.active{display:block}
 .bar b{display:block;height:100%;background:var(--c)}
 
 @media (max-width:700px){.grid,.grid2{grid-template-columns:1fr}.hero{flex-direction:column;text-align:center}}
+
+/* Стили для подсвечивания активного класса в Task 2 */
+#demo-card.active {
+    background-color: #2a3b5c !important;
+    border-color: #7c8cff !important;
+    color: #ffffff !important;
+    box-shadow: 0 0 15px rgba(124, 140, 255, 0.4);
+}
+
+/* Стили для элементов, добавляемых в конец body (Task 1) */
+.new-div {
+    background: #1e293b;
+    border: 1px solid #334155;
+    color: #38bdf8;
+    padding: 10px 14px;
+    margin: 10px 20px;
+    border-radius: 6px;
+    font-size: 14px;
+    font-family: sans-serif;
+}
