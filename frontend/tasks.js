@@ -78,6 +78,6 @@ document.addEventListener('DOMContentLoaded', async () => {
 
 		document.querySelector('nav').firstElementChild.click()
 	} catch (err) {
-		console.error('Ошибка загрузки данных с API:', err)
+		console.errors('Ошибка загрузки данных с API:', err)
 	}
 })
