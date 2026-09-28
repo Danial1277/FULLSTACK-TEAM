@@ -1,155 +1,83 @@
-document.addEventListener('DOMContentLoaded', () => {
-	// ==========================================
-	// Task 1. Работа с DOM и добавление в <body>
-	// ==========================================
+const tags = a => a.map(t => `<span class="tag">${t}</span>`).join('')
+const list = a => a.map(t => `<li>${t}</li>`).join('')
 
-	const helloContainer = document.getElementById('hello-container')
-	const btnCreate = document.getElementById('btn-create')
-	const btnChange = document.getElementById('btn-change')
-	const btnDelete = document.getElementById('btn-delete')
-	const toggleParagraph = document.getElementById('toggle-paragraph')
+const memberHTML = m => {
+	const colorClass = m.category === 'frontend' ? 'fe' : 'be'
+	return `<section id="tab-${m.id}" style="--c:var(--${colorClass})">
+  <div class="hero"><div class="avatar"></div><div><h1>${m.name}</h1><p class="role">${m.role}</p><div class="tags">${tags(m.tags)}</div></div></div>
+  <div class="card"><p class="label">Чем занимается</p><ul class="list">${list(m.does)}</ul></div></section>`
+}
 
-	// 1. Создание элемента "Привет, мир!"
-	function createHelloElement() {
-		if (!helloContainer) return
-		if (document.getElementById('my-element')) return
+const teamHTML = team => `<section id="tab-team">
+  <h1>${team.title}</h1>
+  <div class="card"><p class="label">Структура команды</p><div class="kids">
+    <div><div class="node" style="color:var(--fe)">Frontend</div>${team.structure.frontend.map(n => `<div class="node">${n}</div>`).join('')}</div>
+    <div><div class="node" style="color:var(--be)">Backend</div>${team.structure.backend.map(n => `<div class="node">${n}</div>`).join('')}</div>
+  </div></div>
+  <div class="grid2">
+    <div class="card"><p class="label">Технологии</p><div class="tags">${tags(team.technologies)}</div></div>
+    <div class="card"><p class="label">Роли</p>Frontend <span class="bar"><b style="--c:var(--fe);width:50%"></b></span> ${team.roles_stats.frontend_count}<br>Backend <span class="bar"><b style="--c:var(--be);width:50%"></b></span> ${team.roles_stats.backend_count}</div>
+    <div class="card"><p class="label">Как мы работаем</p><ul class="list">${list(team.work_principles)}</ul></div>
+    <div class="card"><p class="label">Сильные стороны</p><ul class="list">${list(team.strengths)}</ul></div>
+  </div></section>`
 
-		const newElem = document.createElement('div')
-		newElem.id = 'my-element'
-		newElem.textContent = 'Исходный текст элемента'
-		newElem.style.fontSize = '18px'
-		newElem.style.fontWeight = 'bold'
-		helloContainer.appendChild(newElem)
-	}
+document.addEventListener('DOMContentLoaded', async () => {
+	try {
+		const [membersRes, teamRes] = await Promise.all([
+			fetch('/api/members'),
+			fetch('/api/team'),
+		])
 
-	// 2. Изменение текста элемента на "Привет, мир!"
-	if (btnChange) {
-		btnChange.addEventListener('click', () => {
-			const elem = document.getElementById('my-element')
-			if (elem) {
-				elem.textContent = 'Привет, мир!'
-			} else {
-				alert('Сначала создайте элемент!')
-			}
-		})
-	}
+		const M = await membersRes.json()
+		const teamData = await teamRes.json()
 
-	// 3. Удаление элемента из DOM
-	if (btnDelete) {
-		btnDelete.addEventListener('click', () => {
-			const elem = document.getElementById('my-element')
-			if (elem) {
-				elem.remove()
-			}
-		})
-	}
+		// Все таски добавлены как отдельные вкладки в панель навигации
+		const tabs = [
+			...M,
+			{ id: 'team', name: 'Команда' },
+			{ id: 'task1', name: 'Task 1' },
+			{ id: 'task2', name: 'Task 2' },
+			{ id: 'task3', name: 'Task 3' },
+			{ id: 'task4', name: 'Task 4' },
+		]
 
-	// Кнопка пересоздания элемента
-	if (btnCreate) {
-		btnCreate.addEventListener('click', createHelloElement)
-	}
+		document.querySelector('nav').innerHTML = tabs
+			.map(
+				(t, i) =>
+					`<button class="tab-btn${i ? '' : ' active'}" data-tab="${t.id}">${t.name}</button>`,
+			)
+			.join('')
 
-	// Инициализация элемента при старте
-	createHelloElement()
+		// Сохраняем элементы секций перед перерисовкой
+		const task1Sec = document.getElementById('tab-task1')
+		const task2Sec = document.getElementById('tab-task2')
+		const task3Sec = document.getElementById('tab-task3')
+		const task4Sec = document.getElementById('tab-task4')
 
-	// 4. Изменяемый абзац: смена цвета и стиля при нажатии туда и обратно
-	let isParagraphChanged = false
-	if (toggleParagraph) {
-		toggleParagraph.addEventListener('click', () => {
-			isParagraphChanged = !isParagraphChanged
+		// Отрисовываем участников и команду
+		document.getElementById('tabContent').innerHTML =
+			M.map(memberHTML).join('') + teamHTML(teamData)
 
-			if (isParagraphChanged) {
-				toggleParagraph.style.color = '#7c8cff'
-				toggleParagraph.style.fontSize = '22px'
-				toggleParagraph.style.fontWeight = 'bold'
-			} else {
-				toggleParagraph.style.color = ''
-				toggleParagraph.style.fontSize = ''
-				toggleParagraph.style.fontWeight = ''
-			}
-		})
-	}
+		// Вставляем секции тасков обратно
+		if (task1Sec) document.getElementById('tabContent').appendChild(task1Sec)
+		if (task2Sec) document.getElementById('tabContent').appendChild(task2Sec)
+		if (task3Sec) document.getElementById('tabContent').appendChild(task3Sec)
+		if (task4Sec) document.getElementById('tabContent').appendChild(task4Sec)
 
-	// 5. Добавление элемента в конец <body> при каждом клике
-	const task1Card = document.querySelector('#tab-task1 .card')
-	if (task1Card) {
-		const btnAppendBody = document.createElement('button')
-		btnAppendBody.className = 'tab-btn'
-		btnAppendBody.style.marginTop = '15px'
-		btnAppendBody.textContent = 'Добавить элемент в конец <body>'
-
-		btnAppendBody.addEventListener('click', () => {
-			const newDiv = document.createElement('div')
-			newDiv.classList.add('new-div')
-			newDiv.textContent = 'Я новый элемент (добавлен в конец body)'
-			document.body.appendChild(newDiv)
-		})
-
-		task1Card.appendChild(btnAppendBody)
-	}
-
-	// ==========================================
-	// Task 2. Управление классами, смена слов и цвета
-	// ==========================================
-
-	function manageClasses(element) {
-		if (!element) return
-
-		// 1. Переключение класса active
-		element.classList.toggle('active')
-
-		// 2. Проверка состояния
-		const isActive = element.classList.contains('active')
-
-		// 3. Находим тег с текстом
-		const paragraph = element.querySelector('p') || element
-
-		// 4. Прямое изменение текста и цвета
-		if (isActive) {
-			paragraph.textContent = 'Класс ACTIVE АКТИВИРОВАН! (Цвет изменен)'
-			element.style.backgroundColor = '#1d3557'
-			element.style.borderColor = '#45e0c4'
-			element.style.color = '#ffffff'
-		} else {
-			paragraph.textContent = 'Класс active ВЫКЛЮЧЕН. Нажми, чтобы включить'
-			element.style.backgroundColor = ''
-			element.style.borderColor = ''
-			element.style.color = ''
+		// Обработчик переключения вкладок
+		document.querySelector('nav').onclick = e => {
+			const id = e.target.closest('.tab-btn')?.dataset.tab
+			if (!id) return
+			document
+				.querySelectorAll('.tab-btn')
+				.forEach(b => b.classList.toggle('active', b.dataset.tab === id))
+			document
+				.querySelectorAll('section')
+				.forEach(s => s.classList.toggle('active', s.id === 'tab-' + id))
 		}
 
-		// 5. Вывод списка классов
-		const currentClasses = element.className || 'Классов нет'
-		console.log('Текущий список классов:', currentClasses)
-
-		let infoP = element.nextElementSibling
-		if (!infoP || !infoP.classList.contains('class-info-p')) {
-			infoP = document.createElement('p')
-			infoP.classList.add('class-info-p')
-			infoP.style.marginTop = '10px'
-			infoP.style.color = '#888'
-			element.after(infoP)
-		}
-
-		infoP.textContent = `Список классов: ${currentClasses}`
-	}
-
-	const demoCard = document.getElementById('demo-card')
-	if (demoCard) {
-		demoCard.onclick = e => {
-			e.stopPropagation()
-			manageClasses(demoCard)
-		}
-
-		// Начальная инициализация подписи под карточкой
-		let infoP = demoCard.nextElementSibling
-		if (!infoP || !infoP.classList.contains('class-info-p')) {
-			infoP = document.createElement('p')
-			infoP.classList.add('class-info-p')
-			infoP.style.marginTop = '10px'
-			infoP.style.color = '#888'
-			demoCard.after(infoP)
-		}
-		infoP.textContent = `Список классов: ${demoCard.className || 'card'}`
+		document.querySelector('nav').firstElementChild.click()
+	} catch (err) {
+		console.errors('Ошибка загрузки данных с API:', err)
 	}
 })
- 
