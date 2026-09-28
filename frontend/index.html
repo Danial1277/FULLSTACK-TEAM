@@ -8,15 +8,16 @@
 </head>
 <body>
 
-    <!-- Шапка с вкладками -->
+    <!-- Шапка с навигацией и переключателем темы (Task 4) -->
     <header>
-        <nav></nav>
+        <div style="display: flex; justify-content: space-between; align-items: center;">
+            <nav></nav>
+            <button id="theme-toggle" class="tab-btn" style="margin-left: 10px;">🌙 Темная тема</button>
+        </div>
     </header>
 
-    <!-- Основной контент (карточки, команда и таски) -->
+    <!-- Основной контент -->
     <main id="tabContent">
-        <!-- Шаблоны вкладок для Task 1 и Task 2 -->
-        
         <!-- Вкладка Task 1 -->
         <section id="tab-task1">
             <h1>Task 1. Работа с DOM</h1>
@@ -27,9 +28,7 @@
                     <button id="btn-change" class="tab-btn">Изменить текст</button>
                     <button id="btn-delete" class="tab-btn">Удалить элемент</button>
                 </div>
-                <div id="hello-container" style="padding: 10px; border: 1px dashed #555; border-radius: 6px; min-height: 40px;">
-                    <!-- Сюда динамически добавляется элемент -->
-                </div>
+                <div id="hello-container" style="padding: 10px; border: 1px dashed #555; border-radius: 6px; min-height: 40px;"></div>
             </div>
 
             <div class="card" style="margin-top: 20px;">
@@ -45,9 +44,38 @@
             <h1>Task 2. Управление классами</h1>
             <div class="card">
                 <p class="label">Интерактивная карточка</p>
-                <div id="demo-card" class="card" style="cursor: pointer; padding: 20px; border: 1px solid #555; border-radius: 8px;">
+                <div id="demo-card" class="card" style="cursor: pointer; padding: 20px; border: 1px solid #555; border-radius: 8px; transition: all 0.3s ease;">
                     <p style="margin: 0;">Нажми на меня, чтобы переключить класс <code>active</code></p>
                 </div>
+            </div>
+        </section>
+
+        <!-- Вкладка Task 3 (Генерация таблицы и подсчет ячеек) -->
+        <section id="tab-task3">
+            <h1>Task 3. Генерация таблицы и подсчет цвета</h1>
+            
+            <div class="card">
+                <p class="label">1. Настройки генерации</p>
+                <div style="display: flex; gap: 15px; flex-wrap: wrap; align-items: center;">
+                    <label>Строк: <input type="number" id="input-rows" value="4" min="1" max="20" style="width: 60px; padding: 5px;"></label>
+                    <label>Столбцов: <input type="number" id="input-cols" value="4" min="1" max="20" style="width: 60px; padding: 5px;"></label>
+                    <button id="btn-generate-table" class="tab-btn active">Сгенерировать таблицу</button>
+                </div>
+            </div>
+
+            <div class="card">
+                <p class="label">2. Выбор цвета для покраски ячеек</p>
+                <div style="display: flex; gap: 10px; align-items: center; margin-bottom: 15px;">
+                    <span>Цвет при клике:</span>
+                    <input type="color" id="paint-color" value="#38bdf8" style="cursor: pointer; height: 35px; width: 50px;">
+                    <button id="btn-count-cells" class="tab-btn">Посчитать ячейки этого цвета</button>
+                </div>
+                <p id="color-count-result" style="font-weight: bold; color: var(--be);"></p>
+            </div>
+
+            <div class="card" style="overflow-x: auto;">
+                <p class="label">Таблица (кликай по ячейкам для покраски):</p>
+                <div id="table-container"></div>
             </div>
         </section>
     </main>
