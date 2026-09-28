@@ -13,7 +13,7 @@
         <nav></nav>
     </header>
 
-    <!-- Основной контент (Каждая таска в своей отдельной вкладке) -->
+    <!-- Основной контент -->
     <main id="tabContent">
 
         <!-- Вкладка Task 1 -->
@@ -73,13 +73,14 @@
                         <button class="color-swatch" data-color="#c084fc" style="background: #c084fc;"></button>
                         <button class="color-swatch" data-color="#fb923c" style="background: #fb923c;"></button>
                     </div>
-                    <span style="margin-left: 10px;">или кастомный:</span>
+                    <span style="margin-left: 10px;">или пипетка:</span>
                     <input type="color" id="paint-color" value="#38bdf8" style="cursor: pointer; height: 32px; width: 45px; border: none; background: transparent;">
                 </div>
 
-                <div style="display: flex; gap: 20px; flex-wrap: wrap; margin-top: 15px; background: var(--input-bg); padding: 12px; border-radius: 6px;">
-                    <p id="color-count-result" style="font-weight: bold; color: var(--be);">Ячеек выбранного цвета: 0</p>
-                    <p id="total-painted-count" style="font-weight: bold; color: var(--fe);">Всего закрашено ячеек: 0</p>
+                <!-- БЛОК С ДВУМЯ СЧЕТЧИКАМИ -->
+                <div style="display: flex; gap: 20px; flex-wrap: wrap; margin-top: 15px; background: var(--input-bg); padding: 14px; border-radius: 6px; border: 1px solid var(--border);">
+                    <p id="color-count-result" style="font-weight: bold; color: var(--be); margin: 0;">Ячеек выбранного цвета: 0</p>
+                    <p id="total-painted-count" style="font-weight: bold; color: var(--fe); margin: 0;">Всего закрашено ячеек: 0</p>
                 </div>
             </div>
 
