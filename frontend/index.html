@@ -8,16 +8,14 @@
 </head>
 <body>
 
-    <!-- Шапка с навигацией и переключателем темы (Task 4) -->
+    <!-- Шапка с навигацией -->
     <header>
-        <div style="display: flex; justify-content: space-between; align-items: center;">
-            <nav></nav>
-            <button id="theme-toggle" class="tab-btn" style="margin-left: 10px;">🌙 Темная тема</button>
-        </div>
+        <nav></nav>
     </header>
 
-    <!-- Основной контент -->
+    <!-- Основной контент (Каждая таска в своей отдельной секции-вкладке) -->
     <main id="tabContent">
+
         <!-- Вкладка Task 1 -->
         <section id="tab-task1">
             <h1>Task 1. Работа с DOM</h1>
@@ -50,7 +48,7 @@
             </div>
         </section>
 
-        <!-- Вкладка Task 3 (Генерация таблицы и подсчет ячеек) -->
+        <!-- Вкладка Task 3 -->
         <section id="tab-task3">
             <h1>Task 3. Генерация таблицы и подсчет цвета</h1>
             
@@ -78,6 +76,17 @@
                 <div id="table-container"></div>
             </div>
         </section>
+
+        <!-- Вкладка Task 4 -->
+        <section id="tab-task4">
+            <h1>Task 4. Переключатель темы</h1>
+            <div class="card">
+                <p class="label">Управление цветовым режимом приложения</p>
+                <p style="margin-bottom: 15px;">Нажмите кнопку ниже, чтобы переключиться между темной и светлой темой интерфейса:</p>
+                <button id="theme-toggle" class="tab-btn active" style="font-size: 16px; padding: 10px 20px;">🌙 Включить светлую тему</button>
+            </div>
+        </section>
+
     </main>
 
     <script src="app.js"></script>
