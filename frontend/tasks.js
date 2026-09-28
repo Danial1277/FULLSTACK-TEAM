@@ -1,7 +1,7 @@
 document.addEventListener('DOMContentLoaded', () => {
 
     // ==========================================
-    // Task 1. Работа с DOM и добавление в <body>
+    // Task 1. Работа с DOM
     // ==========================================
 
     const helloContainer = document.getElementById('hello-container');
@@ -10,7 +10,6 @@ document.addEventListener('DOMContentLoaded', () => {
     const btnDelete = document.getElementById('btn-delete');
     const toggleParagraph = document.getElementById('toggle-paragraph');
 
-    // 1. Создание элемента "Привет, мир!"
     function createHelloElement() {
         if (!helloContainer) return;
         if (document.getElementById('my-element')) return;
@@ -23,7 +22,6 @@ document.addEventListener('DOMContentLoaded', () => {
         helloContainer.appendChild(newElem);
     }
 
-    // 2. Изменение текста элемента
     if (btnChange) {
         btnChange.addEventListener('click', () => {
             const elem = document.getElementById('my-element');
@@ -32,7 +30,6 @@ document.addEventListener('DOMContentLoaded', () => {
         });
     }
 
-    // 3. Удаление элемента
     if (btnDelete) {
         btnDelete.addEventListener('click', () => {
             const elem = document.getElementById('my-element');
@@ -43,7 +40,6 @@ document.addEventListener('DOMContentLoaded', () => {
     if (btnCreate) btnCreate.addEventListener('click', createHelloElement);
     createHelloElement();
 
-    // 4. Двустороннее переключение цвета/размера абзаца
     let isParagraphChanged = false;
     if (toggleParagraph) {
         toggleParagraph.addEventListener('click', () => {
@@ -60,7 +56,6 @@ document.addEventListener('DOMContentLoaded', () => {
         });
     }
 
-    // 5. Добавление элемента в конец body
     const task1Card = document.querySelector('#tab-task1 .card');
     if (task1Card) {
         const btnAppendBody = document.createElement('button');
@@ -110,7 +105,7 @@ document.addEventListener('DOMContentLoaded', () => {
             infoP.style.color = '#888';
             element.after(infoP);
         }
-        infoP.textContent = Список классов: ${currentClasses};
+        infoP.textContent = `Список классов: ${currentClasses}`;
     }
 
     const demoCard = document.getElementById('demo-card');
@@ -123,7 +118,7 @@ document.addEventListener('DOMContentLoaded', () => {
 
 
     // ==========================================
-    // Task 3. Таблица, палитра, toggle цвета и счетчики
+    // Task 3. Таблица, палитра, снятие цвета и 2 счетчика
     // ==========================================
 
     const btnGenerateTable = document.getElementById('btn-generate-table');
@@ -133,9 +128,34 @@ document.addEventListener('DOMContentLoaded', () => {
     const totalPaintedCount = document.getElementById('total-painted-count');
     const colorPalette = document.getElementById('color-palette');
 
+    // Текущий выбранный цвет в формате HEX (например, #38bdf8)
     let currentColor = paintColorInput ? paintColorInput.value.toLowerCase() : '#38bdf8';
 
-    // 1. Выбор цвета из готовой палитры
+    // Функция пересчета ВСЕХ счетчиков
+    function updateCounters() {
+        const cells = document.querySelectorAll('.custom-table td');
+        let selectedColorCount = 0;
+        let totalPainted = 0;
+
+        cells.forEach(cell => {
+            const cellColor = cell.getAttribute('data-color');
+            if (cellColor) {
+                totalPainted++; // Считаем любую закрашенную ячейку
+                if (cellColor.toLowerCase() === currentColor.toLowerCase()) {
+                    selectedColorCount++; // Считаем только ячейки с текущим выбранным цветом
+                }
+            }
+        });
+
+        if (colorCountResult) {
+            colorCountResult.textContent = `Ячеек выбранного цвета (${currentColor.toUpperCase()}): ${selectedColorCount}`;
+        }
+        if (totalPaintedCount) {
+            totalPaintedCount.textContent = `Всего закрашено ячеек: ${totalPainted}`;
+        }
+    }
+
+    // 1. Выбор цвета из круглых кнопок палитры
     if (colorPalette) {
         colorPalette.addEventListener('click', (e) => {
             const swatch = e.target.closest('.color-swatch');
@@ -160,31 +180,7 @@ document.addEventListener('DOMContentLoaded', () => {
         });
     }
 
-    // 3. Подсчет выбранного цвета и общего количества закрашенных ячеек
-    function updateCounters() {
-        const cells = document.querySelectorAll('.custom-table td');
-        let selectedColorCount = 0;
-        let totalPainted = 0;
-
-        cells.forEach(cell => {
-            const cellColor = cell.getAttribute('data-color');
-            if (cellColor) {
-                totalPainted++;
-                if (cellColor === currentColor) {
-                    selectedColorCount++;
-                }
-            }
-        });
-
-        if (colorCountResult) {
-            colorCountResult.textContent = Ячеек выбранного цвета (${currentColor.toUpperCase()}): ${selectedColorCount};
-        }
-        if (totalPaintedCount) {
-            totalPaintedCount.textContent = Всего закрашено ячеек: ${totalPainted};
-        }
-    }
-
-    // 4. Генерация таблицы
+    // 3. Генерация таблицы
     function generateTable(rows, cols) {
         if (!tableContainer) return;
         tableContainer.innerHTML = '';
@@ -197,23 +193,23 @@ document.addEventListener('DOMContentLoaded', () => {
             const tr = document.createElement('tr');
             for (let c = 0; c < cols; c++) {
                 const td = document.createElement('td');
-                td.textContent = Ячейка ${cellIndex++};
+                td.textContent = `Ячейка ${cellIndex++}`;
 
-                // Клик по ячейке: покраска / снятие цвета при повторном клике
+                // Логика клика по ячейке (Покраска / Снятие цвета)
                 td.addEventListener('click', () => {
                     const previousColor = td.getAttribute('data-color');
 
-                    if (previousColor === currentColor) {
-                        // Снятие цвета (Toggle off)
+                    // Если ячейка уже закрашена ЭТИМ ЖЕ цветом -> СНИМАЕМ ЦВЕТ
+                    if (previousColor && previousColor.toLowerCase() === currentColor.toLowerCase()) {
                         td.style.backgroundColor = '';
                         td.removeAttribute('data-color');
                     } else {
-                        // Покраска в выбранный цвет
+                        // Иначе закрашиваем в выбранный цвет
                         td.style.backgroundColor = currentColor;
                         td.setAttribute('data-color', currentColor);
                     }
 
-                    // Автоматическое обновление счетчиков при каждом нажатии
+                    // Сразу пересчитываем счетчики
                     updateCounters();
                 });
 
@@ -233,13 +229,13 @@ document.addEventListener('DOMContentLoaded', () => {
             generateTable(rows, cols);
         });
 
-        // Первичная инициализация 4x4
+        // Запуск по умолчанию
         generateTable(4, 4);
     }
 
 
     // ==========================================
-    // Task 4. Переключатель темной / светлой темы
+    // Task 4. Переключатель темы
     // ==========================================
 
     const themeToggleBtn = document.getElementById('theme-toggle');
