@@ -31,12 +31,14 @@ document.addEventListener('DOMContentLoaded', async () => {
 		const M = await membersRes.json()
 		const teamData = await teamRes.json()
 
-		// Все вкладки в шапке
+		// Все таски добавлены как отдельные вкладки в панель навигации
 		const tabs = [
 			...M,
 			{ id: 'team', name: 'Команда' },
 			{ id: 'task1', name: 'Task 1' },
 			{ id: 'task2', name: 'Task 2' },
+			{ id: 'task3', name: 'Task 3' },
+			{ id: 'task4', name: 'Task 4' },
 		]
 
 		document.querySelector('nav').innerHTML = tabs
@@ -46,18 +48,23 @@ document.addEventListener('DOMContentLoaded', async () => {
 			)
 			.join('')
 
-		// Сохраняем секции Task 1 и Task 2 из HTML
+		// Сохраняем элементы секций перед перерисовкой
 		const task1Sec = document.getElementById('tab-task1')
 		const task2Sec = document.getElementById('tab-task2')
+		const task3Sec = document.getElementById('tab-task3')
+		const task4Sec = document.getElementById('tab-task4')
 
-		// Рендерим динамические секции и возвращаем задачи
+		// Отрисовываем участников и команду
 		document.getElementById('tabContent').innerHTML =
 			M.map(memberHTML).join('') + teamHTML(teamData)
 
+		// Вставляем секции тасков обратно
 		if (task1Sec) document.getElementById('tabContent').appendChild(task1Sec)
 		if (task2Sec) document.getElementById('tabContent').appendChild(task2Sec)
+		if (task3Sec) document.getElementById('tabContent').appendChild(task3Sec)
+		if (task4Sec) document.getElementById('tabContent').appendChild(task4Sec)
 
-		// Обработка переключения вкладок
+		// Обработчик переключения вкладок
 		document.querySelector('nav').onclick = e => {
 			const id = e.target.closest('.tab-btn')?.dataset.tab
 			if (!id) return
@@ -69,7 +76,6 @@ document.addEventListener('DOMContentLoaded', async () => {
 				.forEach(s => s.classList.toggle('active', s.id === 'tab-' + id))
 		}
 
-		// Активируем первую вкладку по умолчанию
 		document.querySelector('nav').firstElementChild.click()
 	} catch (err) {
 		console.error('Ошибка загрузки данных с API:', err)

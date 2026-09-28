@@ -152,3 +152,4 @@ document.addEventListener('DOMContentLoaded', () => {
 		infoP.textContent = `Список классов: ${demoCard.className || 'card'}`
 	}
 })
+ 
