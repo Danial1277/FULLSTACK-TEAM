@@ -1,9 +1,9 @@
-const tags = a => a.map(t => `<span class="tag">${t}</span>`).join('')
-const list = a => a.map(t => `<li>${t}</li>`).join('')
+const tags = a => a.map(t => <span class="tag">${t}</span>).join('')
+const list = a => a.map(t => <li>${t}</li>).join('')
 
 const memberHTML = m => {
-	const colorClass = m.category === 'frontend' ? 'fe' : 'be'
-	return `<section id="tab-${m.id}" style="--c:var(--${colorClass})">
+  const colorClass = m.category === 'frontend' ? 'fe' : 'be'
+  return `<section id="tab-${m.id}" style="--c:var(--${colorClass})">
   <div class="hero"><div class="avatar"></div><div><h1>${m.name}</h1><p class="role">${m.role}</p><div class="tags">${tags(m.tags)}</div></div></div>
   <div class="card"><p class="label">Чем занимается</p><ul class="list">${list(m.does)}</ul></div></section>`
 }
@@ -11,8 +11,8 @@ const memberHTML = m => {
 const teamHTML = team => `<section id="tab-team">
   <h1>${team.title}</h1>
   <div class="card"><p class="label">Структура команды</p><div class="kids">
-    <div><div class="node" style="color:var(--fe)">Frontend</div>${team.structure.frontend.map(n => `<div class="node">${n}</div>`).join('')}</div>
-    <div><div class="node" style="color:var(--be)">Backend</div>${team.structure.backend.map(n => `<div class="node">${n}</div>`).join('')}</div>
+    <div><div class="node" style="color:var(--fe)">Frontend</div>${team.structure.frontend.map(n => <div class="node">${n}</div>).join('')}</div>
+    <div><div class="node" style="color:var(--be)">Backend</div>${team.structure.backend.map(n => <div class="node">${n}</div>).join('')}</div>
   </div></div>
   <div class="grid2">
     <div class="card"><p class="label">Технологии</p><div class="tags">${tags(team.technologies)}</div></div>
@@ -22,62 +22,61 @@ const teamHTML = team => `<section id="tab-team">
   </div></section>`
 
 document.addEventListener('DOMContentLoaded', async () => {
-	try {
-		const [membersRes, teamRes] = await Promise.all([
-			fetch('/api/members'),
-			fetch('/api/team'),
-		])
+    try {
+        const [membersRes, teamRes] = await Promise.all([
+            fetch('/api/members'),
+            fetch('/api/team'),
+        ])
 
-		const M = await membersRes.json()
-		const teamData = await teamRes.json()
+        const M = await membersRes.json()
+        const teamData = await teamRes.json()
 
-		// Все таски добавлены как отдельные вкладки в панель навигации
-		const tabs = [
-			...M,
-			{ id: 'team', name: 'Команда' },
-			{ id: 'task1', name: 'Task 1' },
-			{ id: 'task2', name: 'Task 2' },
-			{ id: 'task3', name: 'Task 3' },
-			{ id: 'task4', name: 'Task 4' },
-		]
+        // Формирование всех вкладок (участники + команда + задачи 1-4)
+        const tabs = [
+            ...M, 
+            { id: 'team', name: 'Команда' },
+            { id: 'task1', name: 'Task 1' },
+            { id: 'task2', name: 'Task 2' },
+            { id: 'task3', name: 'Task 3' },
+            { id: 'task4', name: 'Task 4' }
+        ]
 
-		document.querySelector('nav').innerHTML = tabs
-			.map(
-				(t, i) =>
-					`<button class="tab-btn${i ? '' : ' active'}" data-tab="${t.id}">${t.name}</button>`,
-			)
-			.join('')
+        document.querySelector('nav').innerHTML = tabs
+            .map(
+                (t, i) =>
+                    <button class="tab-btn${i ? '' : ' active'}" data-tab="${t.id}">${t.name}</button>,
+            )
+            .join('')
 
-		// Сохраняем элементы секций перед перерисовкой
-		const task1Sec = document.getElementById('tab-task1')
-		const task2Sec = document.getElementById('tab-task2')
-		const task3Sec = document.getElementById('tab-task3')
-		const task4Sec = document.getElementById('tab-task4')
+        const task1Sec = document.getElementById('tab-task1')
+        const task2Sec = document.getElementById('tab-task2')
+        const task3Sec = document.getElementById('tab-task3')
+        const task4Sec = document.getElementById('tab-task4')
 
-		// Отрисовываем участников и команду
-		document.getElementById('tabContent').innerHTML =
-			M.map(memberHTML).join('') + teamHTML(teamData)
+        // Отрисовка динамических секций из API
+        document.getElementById('tabContent').innerHTML =
+            M.map(memberHTML).join('') + teamHTML(teamData)
+        
+        // Вставка статических секций задач
+        if (task1Sec) document.getElementById('tabContent').appendChild(task1Sec)
+        if (task2Sec) document.getElementById('tabContent').appendChild(task2Sec)
+        if (task3Sec) document.getElementById('tabContent').appendChild(task3Sec)
+        if (task4Sec) document.getElementById('tabContent').appendChild(task4Sec)
 
-		// Вставляем секции тасков обратно
-		if (task1Sec) document.getElementById('tabContent').appendChild(task1Sec)
-		if (task2Sec) document.getElementById('tabContent').appendChild(task2Sec)
-		if (task3Sec) document.getElementById('tabContent').appendChild(task3Sec)
-		if (task4Sec) document.getElementById('tabContent').appendChild(task4Sec)
+        // Переключение вкладок по клику
+        document.querySelector('nav').onclick = e => {
+            const id = e.target.closest('.tab-btn')?.dataset.tab
+            if (!id) return
+            document
+                .querySelectorAll('.tab-btn')
+                .forEach(b => b.classList.toggle('active', b.dataset.tab === id))
+            document
+                .querySelectorAll('section')
+                .forEach(s => s.classList.toggle('active', s.id === 'tab-' + id))
+        }
 
-		// Обработчик переключения вкладок
-		document.querySelector('nav').onclick = e => {
-			const id = e.target.closest('.tab-btn')?.dataset.tab
-			if (!id) return
-			document
-				.querySelectorAll('.tab-btn')
-				.forEach(b => b.classList.toggle('active', b.dataset.tab === id))
-			document
-				.querySelectorAll('section')
-				.forEach(s => s.classList.toggle('active', s.id === 'tab-' + id))
-		}
-
-		document.querySelector('nav').firstElementChild.click()
-	} catch (err) {
-		console.error('Ошибка загрузки данных с API:', err)
-	}
+        document.querySelector('nav').firstElementChild.click()
+    } catch (err) {
+        console.error('Ошибка загрузки данных с API:', err)
+    }
 })
