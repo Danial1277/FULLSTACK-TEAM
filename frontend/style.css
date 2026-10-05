@@ -6,6 +6,16 @@
   --border: #334155;
   --text: #f8fafc;
   --text-muted: #94a3b8;
+  --input-bg: #0f172a;
+}
+
+body.light-theme {
+  --bg: #f8fafc;
+  --card-bg: #ffffff;
+  --border: #cbd5e1;
+  --text: #0f172a;
+  --text-muted: #64748b;
+  --input-bg: #f1f5f9;
 }
 
 * {
@@ -20,6 +30,7 @@ body {
   color: var(--text);
   padding: 20px;
   line-height: 1.5;
+  transition: background-color 0.3s ease, color 0.3s ease;
 }
 
 header {
@@ -47,13 +58,13 @@ nav {
 
 .tab-btn:hover {
   color: var(--text);
-  border-color: #475569;
+  border-color: var(--text-muted);
 }
 
 .tab-btn.active {
-  background: #38bdf8;
+  background: var(--be);
   color: #0f172a;
-  border-color: #38bdf8;
+  border-color: var(--be);
   font-weight: 600;
 }
 
@@ -96,6 +107,7 @@ h1 {
   border-radius: 8px;
   padding: 20px;
   margin-bottom: 20px;
+  transition: background-color 0.3s ease, border-color 0.3s ease;
 }
 
 .label {
@@ -151,7 +163,7 @@ h1 {
 }
 
 .node {
-  background: #0f172a;
+  background: var(--bg);
   border: 1px solid var(--border);
   padding: 8px 12px;
   border-radius: 6px;
@@ -175,11 +187,57 @@ h1 {
   background: var(--c, var(--fe));
 }
 
-/* ==========================================
-   Стили для Task 1 и Task 2
-   ========================================== */
+input[type="number"] {
+  background: var(--input-bg);
+  color: var(--text);
+  border: 1px solid var(--border);
+  border-radius: 4px;
+}
 
-/* Карточка в Task 2 с классом active */
+/* ==========================================
+   Task 3. Стили Таблицы и Палитры
+   ========================================== */
+.custom-table {
+  border-collapse: collapse;
+  width: 100%;
+  margin-top: 10px;
+}
+
+.custom-table td {
+  border: 1px solid var(--border);
+  padding: 15px;
+  text-align: center;
+  cursor: pointer;
+  user-select: none;
+  transition: background-color 0.2s ease;
+}
+
+.custom-table td:hover {
+  opacity: 0.8;
+}
+
+.color-swatch {
+  width: 32px;
+  height: 32px;
+  border-radius: 50%;
+  border: 2px solid transparent;
+  cursor: pointer;
+  transition: transform 0.2s ease, border-color 0.2s ease;
+}
+
+.color-swatch:hover {
+  transform: scale(1.15);
+}
+
+.color-swatch.active {
+  border-color: #ffffff !important;
+  box-shadow: 0 0 8px rgba(255, 255, 255, 0.8);
+  transform: scale(1.1);
+}
+
+/* ==========================================
+   Task 2 и Дополнительно
+   ========================================== */
 #demo-card.active {
   background-color: #1d3557 !important;
   border-color: #45e0c4 !important;
@@ -187,14 +245,12 @@ h1 {
   box-shadow: 0 0 15px rgba(69, 224, 196, 0.3) !important;
 }
 
-/* Элементы, создаваемые в конце body (Task 1) */
 .new-div {
-  background: #1e293b;
-  border: 1px solid #334155;
-  color: #38bdf8;
+  background: var(--card-bg);
+  border: 1px solid var(--border);
+  color: var(--be);
   padding: 10px 14px;
   margin: 10px 20px;
   border-radius: 6px;
   font-size: 14px;
-  font-family: sans-serif;
 }
