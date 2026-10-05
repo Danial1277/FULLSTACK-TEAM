@@ -244,13 +244,14 @@ document.addEventListener('DOMContentLoaded', () => {
 
 
     // ==========================================
-    // Task 5. DummyJSON CRUD с постоянным сохранением в localStorage
+    // Task 5. DummyJSON CRUD с уникальными ID
     // ==========================================
 
     const dummyContainer = document.getElementById('dummy-products-container');
     const dummyForm = document.getElementById('dummy-create-form');
     const btnRefreshDummy = document.getElementById('btn-refresh-dummy');
 
+    // Выплывающее уведомление
     function showNotification(message, color = '#4ade80') {
         let toast = document.getElementById('toast-notification');
         if (!toast) {
@@ -278,34 +279,16 @@ document.addEventListener('DOMContentLoaded', () => {
         }, 3000);
     }
 
-    // Методы работы с локальным хранилищем
-    function getLocalProducts() {
+    // Хранилище созданных пользователем товаров
+    function getCreatedProducts() {
         return JSON.parse(localStorage.getItem('my_created_products') || '[]');
     }
 
-    function saveLocalProducts(products) {
+    function saveCreatedProducts(products) {
         localStorage.setItem('my_created_products', JSON.stringify(products));
     }
 
-    function getUpdatedProducts() {
-        return JSON.parse(localStorage.getItem('my_updated_products') || '{}');
-    }
-
-    function saveUpdatedProducts(updatedObj) {
-        localStorage.setItem('my_updated_products', JSON.stringify(updatedObj));
-    }
-
-    function getDeletedIds() {
-        return JSON.parse(localStorage.getItem('my_deleted_ids') || '[]');
-    }
-
-    function addDeletedId(id) {
-        const ids = getDeletedIds();
-        ids.push(String(id));
-        localStorage.setItem('my_deleted_ids', JSON.stringify(ids));
-    }
-
-    // Генерация карточки товара
+    // Рендер карточки
     function renderProductCard(p) {
         const isCustom = p.isCustom;
         return `
@@ -321,23 +304,16 @@ document.addEventListener('DOMContentLoaded', () => {
         `;
     }
 
-    // Полный рендер всех товаров (Созданные вручную + Загруженные из API)
+    // Загрузка товаров с сервера + добавление созданных
     async function loadDummyProducts() {
         if (!dummyContainer) return;
         dummyContainer.innerHTML = '<p style="color: var(--text-muted)">Загрузка товаров с DummyJSON...</p>';
 
         const apiProducts = await getDummyProducts(6, 0) || [];
-        const createdProducts = getLocalProducts();
-        const updatedMap = getUpdatedProducts();
-        const deletedIds = getDeletedIds();
+        const createdProducts = getCreatedProducts();
 
-        // 1. Фильтруем и обновляем сетевые товары из DummyJSON
-        const filteredApiProducts = apiProducts
-            .filter(p => !deletedIds.includes(String(p.id)))
-            .map(p => updatedMap[p.id] ? { ...p, ...updatedMap[p.id] } : p);
-
-        // 2. Объединяем: Созданные пользователем ставим в самое начало
-        const allProducts = [...createdProducts, ...filteredApiProducts];
+        // Объединяем созданные товары со свежими товарами из DummyJSON
+        const allProducts = [...createdProducts, ...apiProducts];
 
         if (allProducts.length === 0) {
             dummyContainer.innerHTML = '<p style="color: var(--text-muted)">Список товаров пуст</p>';
@@ -347,11 +323,15 @@ document.addEventListener('DOMContentLoaded', () => {
         dummyContainer.innerHTML = allProducts.map(p => renderProductCard(p)).join('');
     }
 
+    // Кнопка Обновить данные — сбрасывает сетевые данные
     if (btnRefreshDummy) {
-        btnRefreshDummy.addEventListener('click', loadDummyProducts);
+        btnRefreshDummy.addEventListener('click', () => {
+            showNotification('Данные загружены заново с DummyJSON', '#38bdf8');
+            loadDummyProducts();
+        });
     }
 
-    // Создание товара (POST + Гарантированное сохранение в localStorage)
+    // Создание товара с ГЕНЕРАЦИЕЙ УНИКАЛЬНОГО ID
     if (dummyForm) {
         dummyForm.addEventListener('submit', async (e) => {
             e.preventDefault();
@@ -363,33 +343,36 @@ document.addEventListener('DOMContentLoaded', () => {
 
             if (!title || !price) return;
 
-            // Вызываем POST к DummyJSON
-            const apiRes = await createDummyProduct(title, price);
+            // Вызываем POST к DummyJSON для соблюдения требования
+            await createDummyProduct(title, price);
+
+            // Генерируем свой уникальный ID (101, 102, 103...), чтобы ID не повторялись
+            const createdProducts = getCreatedProducts();
+            const uniqueId = createdProducts.length > 0 
+                ? Math.max(...createdProducts.map(p => p.id)) + 1 
+                : 101;
 
             const newProduct = {
-                id: apiRes && apiRes.id ? apiRes.id : Date.now(),
+                id: uniqueId,
                 title: title,
                 price: Number(price),
                 category: 'пользовательский',
                 isCustom: true
             };
 
-            // Записываем в localStorage
-            const createdProducts = getLocalProducts();
             createdProducts.unshift(newProduct);
-            saveLocalProducts(createdProducts);
+            saveCreatedProducts(createdProducts);
 
-            showNotification(`Товар сохранен локально (POST): "${title}"`, '#4ade80');
+            showNotification(`Товар создан (POST): "${title}" [ID: ${uniqueId}]`, '#4ade80');
 
             titleInput.value = '';
             priceInput.value = '';
 
-            // Обновляем список
             loadDummyProducts();
         });
     }
 
-    // Обработчик редактирования и удаления карточек
+    // Обработчик редактирования и удаления
     if (dummyContainer) {
         dummyContainer.addEventListener('click', async (e) => {
             const btnEdit = e.target.closest('.btn-edit-dummy');
@@ -397,7 +380,7 @@ document.addEventListener('DOMContentLoaded', () => {
             const btnSave = e.target.closest('.btn-save-dummy');
             const btnCancel = e.target.closest('.btn-cancel-dummy');
 
-            // 1. Открытие инлайн формы
+            // 1. Показ формы инлайн-редактирования
             if (btnEdit) {
                 const id = btnEdit.dataset.id;
                 const card = document.getElementById(`dummy-item-${id}`);
@@ -419,7 +402,7 @@ document.addEventListener('DOMContentLoaded', () => {
                 `;
             }
 
-            // 2. Нажатие кнопки Сохранить (PUT + Перезапись в localStorage)
+            // 2. Нажатие кнопки Сохранить (PUT)
             if (btnSave) {
                 e.preventDefault();
 
@@ -432,27 +415,21 @@ document.addEventListener('DOMContentLoaded', () => {
 
                 if (!newTitle || !newPrice) return;
 
-                // Запрос PUT к сетевому API
+                // Сетевой запрос PUT
                 updateDummyProduct(id, newTitle, newPrice);
 
                 if (isCustom) {
-                    // Обновляем в списке созданных вручную
-                    const createdProducts = getLocalProducts();
+                    const createdProducts = getCreatedProducts();
                     const item = createdProducts.find(p => String(p.id) === String(id));
                     if (item) {
                         item.title = newTitle;
                         item.price = Number(newPrice);
-                        saveLocalProducts(createdProducts);
+                        saveCreatedProducts(createdProducts);
                     }
-                } else {
-                    // Сохраняем патч для стандартов из DummyJSON
-                    const updatedMap = getUpdatedProducts();
-                    updatedMap[id] = { title: newTitle, price: Number(newPrice) };
-                    saveUpdatedProducts(updatedMap);
                 }
 
-                showNotification(`Изменения для ID ${id} успешно сохранены!`, '#38bdf8');
-                loadDummyProducts();
+                showNotification(`Изменения сохранены!`, '#38bdf8');
+                card.querySelector('.edit-title-input') ? loadDummyProducts() : null;
             }
 
             // 3. Отмена редактирования
@@ -465,7 +442,7 @@ document.addEventListener('DOMContentLoaded', () => {
                 }
             }
 
-            // 4. Удаление (DELETE + Фиксация в localStorage)
+            // 4. Удаление (DELETE)
             if (btnDelete) {
                 const id = btnDelete.dataset.id;
                 const card = document.getElementById(`dummy-item-${id}`);
@@ -474,11 +451,9 @@ document.addEventListener('DOMContentLoaded', () => {
                 deleteDummyProduct(id);
 
                 if (isCustom) {
-                    let createdProducts = getLocalProducts();
+                    let createdProducts = getCreatedProducts();
                     createdProducts = createdProducts.filter(p => String(p.id) !== String(id));
-                    saveLocalProducts(createdProducts);
-                } else {
-                    addDeletedId(id);
+                    saveCreatedProducts(createdProducts);
                 }
 
                 showNotification(`Товар ID ${id} удален!`, '#f87171');
