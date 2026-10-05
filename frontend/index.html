@@ -104,18 +104,18 @@
             <h1>Task 5. Интеграция DummyJSON (CRUD)</h1>
             
             <div class="card">
-                <p class="label">Создание нового товара (POST)</p>
+                <p class="label">Создание нового товара</p>
                 <form id="dummy-create-form" style="display: flex; gap: 10px; flex-wrap: wrap; align-items: center;">
                     <input type="text" id="dummy-title-input" placeholder="Название товара" required style="padding: 8px; flex: 1; min-width: 180px;">
                     <input type="number" id="dummy-price-input" placeholder="Цена ($)" required style="padding: 8px; width: 100px;">
-                    <button type="submit" class="tab-btn active">➕ Добавить товар</button>
+                    <button type="submit" class="tab-btn active">➕</button>
                 </form>
             </div>
 
             <div class="card">
                 <div style="display: flex; justify-content: space-between; align-items: center; flex-wrap: wrap; gap: 10px; margin-bottom: 15px;">
                     <p class="label" style="margin: 0;">Список товаров с https://dummyjson.com/products (GET)</p>
-                    <button id="btn-refresh-dummy" class="tab-btn">🔄 Обновить данные</button>
+                    <button id="btn-refresh-dummy" class="tab-btn">🔄</button>
                 </div>
                 <div id="dummy-products-container" class="grid2"></div>
             </div>

@@ -385,9 +385,9 @@ document.addEventListener('DOMContentLoaded', () => {
                 </p>
 
                 <div style="display: flex; gap: 8px; flex-wrap: wrap;" class="card-actions">
-                    <button type="button" class="tab-btn btn-view-dummy" data-id="${p.id}" style="background: rgba(56, 189, 248, 0.1); border-color: #38bdf8; color: #38bdf8;">👁️ Подробнее</button>
-                    <button type="button" class="tab-btn btn-edit-dummy" data-id="${p.id}">✏️ Изменить</button>
-                    <button type="button" class="tab-btn btn-delete-dummy" data-id="${p.id}" style="border-color: #f87171; color: #f87171;">🗑️ Удалить</button>
+                    <button type="button" class="tab-btn btn-view-dummy" data-id="${p.id}" style="background: rgba(56, 189, 248, 0.1); border-color: #38bdf8; color: #38bdf8;">👁️</button>
+                    <button type="button" class="tab-btn btn-edit-dummy" data-id="${p.id}">✏️</button>
+                    <button type="button" class="tab-btn btn-delete-dummy" data-id="${p.id}" style="border-color: #f87171; color: #f87171;">🗑️</button>
                 </div>
             </div>
         `;
@@ -511,8 +511,8 @@ document.addEventListener('DOMContentLoaded', () => {
                         <textarea class="edit-desc-input" placeholder="Описание товара" style="padding: 6px; border-radius: 4px; border: 1px solid var(--border, #334155); background: var(--input-bg, #0f172a); color: var(--text, #fff); resize: vertical; min-height: 60px;">${product.description || ''}</textarea>
                     </div>
                     <div style="display: flex; gap: 8px;">
-                        <button type="button" class="tab-btn btn-save-dummy" data-id="${id}" style="background: var(--be, #38bdf8); color: #0f172a;">💾 Сохранить</button>
-                        <button type="button" class="tab-btn btn-cancel-dummy" data-id="${id}">❌ Отмена</button>
+                        <button type="button" class="tab-btn btn-save-dummy" data-id="${id}" style="background: var(--be, #38bdf8); color: #0f172a;">💾</button>
+                        <button type="button" class="tab-btn btn-cancel-dummy" data-id="${id}">❌</button>
                     </div>
                 `;
             }
