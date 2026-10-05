@@ -244,14 +244,28 @@ document.addEventListener('DOMContentLoaded', () => {
 
 
     // ==========================================
-    // Task 5. DummyJSON CRUD с уникальными ID
+    // Task 5. DummyJSON (С Рейтингом, Описанием и Модальным окном)
     // ==========================================
 
     const dummyContainer = document.getElementById('dummy-products-container');
     const dummyForm = document.getElementById('dummy-create-form');
     const btnRefreshDummy = document.getElementById('btn-refresh-dummy');
 
-    // Выплывающее уведомление
+    let currentLoadedProductsMap = {};
+
+    function renderStars(rating = 0) {
+        const numericRating = Number(rating) || 0;
+        const fullStars = Math.floor(numericRating);
+        const hasHalfStar = numericRating % 1 >= 0.5;
+        const emptyStars = 5 - fullStars - (hasHalfStar ? 1 : 0);
+
+        let starsHtml = '★'.repeat(fullStars);
+        if (hasHalfStar) starsHtml += '½';
+        starsHtml += '☆'.repeat(Math.max(0, emptyStars));
+
+        return `<span style="color: #facc15; font-size: 16px;">${starsHtml}</span> <span style="font-size: 13px; color: var(--text-muted, #888);">(${numericRating.toFixed(1)})</span>`;
+    }
+
     function showNotification(message, color = '#4ade80') {
         let toast = document.getElementById('toast-notification');
         if (!toast) {
@@ -279,7 +293,49 @@ document.addEventListener('DOMContentLoaded', () => {
         }, 3000);
     }
 
-    // Хранилище созданных пользователем товаров
+    function openProductModal(product) {
+        let modal = document.getElementById('product-detail-modal');
+        if (!modal) {
+            modal = document.createElement('div');
+            modal.id = 'product-detail-modal';
+            modal.style.position = 'fixed';
+            modal.style.top = '0';
+            modal.style.left = '0';
+            modal.style.width = '100vw';
+            modal.style.height = '100vh';
+            modal.style.backgroundColor = 'rgba(0,0,0,0.7)';
+            modal.style.display = 'flex';
+            modal.style.justifyContent = 'center';
+            modal.style.alignItems = 'center';
+            modal.style.zIndex = '10000';
+            document.body.appendChild(modal);
+        }
+
+        modal.innerHTML = `
+            <div style="background: var(--card-bg, #1e293b); padding: 24px; border-radius: 12px; max-width: 450px; width: 90%; border: 1px solid var(--border, #334155); box-shadow: 0 10px 25px rgba(0,0,0,0.5); color: var(--text, #f8fafc); position: relative;">
+                <button type="button" id="btn-close-modal" style="position: absolute; top: 12px; right: 12px; background: transparent; border: none; font-size: 20px; color: #94a3b8; cursor: pointer;">✕</button>
+                <p class="label" style="color: #38bdf8; margin-bottom: 6px;">ID: ${product.id} | ${product.category || 'товар'}</p>
+                <h2 style="margin-bottom: 10px; font-size: 20px;">${product.title}</h2>
+                <div style="margin-bottom: 12px;">
+                    <strong>Рейтинг:</strong> ${renderStars(product.rating)}
+                </div>
+                <p style="font-size: 22px; font-weight: bold; color: #4ade80; margin-bottom: 14px;">$${product.price}</p>
+                <div style="background: rgba(255,255,255,0.05); padding: 12px; border-radius: 6px; margin-bottom: 16px;">
+                    <strong style="display: block; margin-bottom: 4px; color: #94a3b8;">Описание:</strong>
+                    <p style="margin: 0; line-height: 1.5; font-size: 14px;">${product.description || 'Описание отсутствует'}</p>
+                </div>
+                <button type="button" class="tab-btn" id="btn-modal-ok" style="width: 100%;">Закрыть</button>
+            </div>
+        `;
+
+        modal.style.display = 'flex';
+
+        const closeModal = () => { modal.style.display = 'none'; };
+        document.getElementById('btn-close-modal').onclick = closeModal;
+        document.getElementById('btn-modal-ok').onclick = closeModal;
+        modal.onclick = (e) => { if (e.target === modal) closeModal(); };
+    }
+
     function getCreatedProducts() {
         return JSON.parse(localStorage.getItem('my_created_products') || '[]');
     }
@@ -288,15 +344,48 @@ document.addEventListener('DOMContentLoaded', () => {
         localStorage.setItem('my_created_products', JSON.stringify(products));
     }
 
-    // Рендер карточки
+    function getUpdatedProducts() {
+        return JSON.parse(localStorage.getItem('my_updated_products') || '{}');
+    }
+
+    function saveUpdatedProducts(map) {
+        localStorage.setItem('my_updated_products', JSON.stringify(map));
+    }
+
+    function getDeletedIds() {
+        return JSON.parse(localStorage.getItem('my_deleted_ids') || '[]');
+    }
+
+    function addDeletedId(id) {
+        const ids = getDeletedIds();
+        if (!ids.includes(String(id))) {
+            ids.push(String(id));
+            localStorage.setItem('my_deleted_ids', JSON.stringify(ids));
+        }
+    }
+
     function renderProductCard(p) {
         const isCustom = p.isCustom;
+        const rating = p.rating || 4.5;
+        const description = p.description || 'Нажмите "Подробнее", чтобы просмотреть описание товара.';
+
         return `
-            <div class="card dummy-card" id="dummy-item-${p.id}" data-id="${p.id}" data-is-custom="${isCustom ? 'true' : 'false'}" style="${isCustom ? 'border-color: #4ade80;' : ''}">
+            <div class="card dummy-card" id="dummy-item-${p.id}" data-id="${p.id}" data-is-custom="${isCustom ? 'true' : 'false'}" style="cursor: pointer; ${isCustom ? 'border-color: #4ade80;' : ''}">
                 <p class="label" style="${isCustom ? 'color: #4ade80;' : ''}">ID: ${p.id} ${isCustom ? '(Созданный)' : '| ' + (p.category || 'товар')}</p>
-                <h3 style="margin-bottom: 8px;" class="card-title">${p.title}</h3>
-                <p style="font-size: 18px; font-weight: bold; color: var(--be); margin-bottom: 12px;" class="card-price">$${p.price}</p>
+                <h3 style="margin-bottom: 6px;" class="card-title">${p.title}</h3>
+                
+                <div style="margin-bottom: 8px;" class="card-rating">
+                    ${renderStars(rating)}
+                </div>
+
+                <p style="font-size: 18px; font-weight: bold; color: var(--be, #38bdf8); margin-bottom: 8px;" class="card-price">$${p.price}</p>
+                
+                <p style="font-size: 13px; color: var(--text-muted, #888); margin-bottom: 12px; display: -webkit-box; -webkit-line-clamp: 2; -webkit-box-orient: vertical; overflow: hidden;" class="card-description">
+                    ${description}
+                </p>
+
                 <div style="display: flex; gap: 8px; flex-wrap: wrap;" class="card-actions">
+                    <button type="button" class="tab-btn btn-view-dummy" data-id="${p.id}" style="background: rgba(56, 189, 248, 0.1); border-color: #38bdf8; color: #38bdf8;">👁️ Подробнее</button>
                     <button type="button" class="tab-btn btn-edit-dummy" data-id="${p.id}">✏️ Изменить</button>
                     <button type="button" class="tab-btn btn-delete-dummy" data-id="${p.id}" style="border-color: #f87171; color: #f87171;">🗑️ Удалить</button>
                 </div>
@@ -304,49 +393,62 @@ document.addEventListener('DOMContentLoaded', () => {
         `;
     }
 
-    // Загрузка товаров с сервера + добавление созданных
     async function loadDummyProducts() {
         if (!dummyContainer) return;
-        dummyContainer.innerHTML = '<p style="color: var(--text-muted)">Загрузка товаров с DummyJSON...</p>';
+        dummyContainer.innerHTML = '<p style="color: var(--text-muted, #888)">Загрузка товаров с DummyJSON...</p>';
 
-        const apiProducts = await getDummyProducts(6, 0) || [];
+        let apiProducts = [];
+        if (typeof getDummyProducts === 'function') {
+            apiProducts = await getDummyProducts(6, 0) || [];
+        }
+
         const createdProducts = getCreatedProducts();
+        const updatedMap = getUpdatedProducts();
+        const deletedIds = getDeletedIds();
 
-        // Объединяем созданные товары со свежими товарами из DummyJSON
-        const allProducts = [...createdProducts, ...apiProducts];
+        const filteredApiProducts = apiProducts
+            .filter(p => !deletedIds.includes(String(p.id)))
+            .map(p => updatedMap[p.id] ? { ...p, ...updatedMap[p.id] } : p);
+
+        const allProducts = [...createdProducts, ...filteredApiProducts];
+
+        currentLoadedProductsMap = {};
+        allProducts.forEach(p => {
+            currentLoadedProductsMap[p.id] = p;
+        });
 
         if (allProducts.length === 0) {
-            dummyContainer.innerHTML = '<p style="color: var(--text-muted)">Список товаров пуст</p>';
+            dummyContainer.innerHTML = '<p style="color: var(--text-muted, #888)">Список товаров пуст</p>';
             return;
         }
 
         dummyContainer.innerHTML = allProducts.map(p => renderProductCard(p)).join('');
     }
 
-    // Кнопка Обновить данные — сбрасывает сетевые данные
     if (btnRefreshDummy) {
         btnRefreshDummy.addEventListener('click', () => {
-            showNotification('Данные загружены заново с DummyJSON', '#38bdf8');
+            showNotification('Данные обновлены с сервера', '#38bdf8');
             loadDummyProducts();
         });
     }
 
-    // Создание товара с ГЕНЕРАЦИЕЙ УНИКАЛЬНОГО ID
     if (dummyForm) {
         dummyForm.addEventListener('submit', async (e) => {
             e.preventDefault();
             const titleInput = document.getElementById('dummy-title-input');
             const priceInput = document.getElementById('dummy-price-input');
+            const descInput = document.getElementById('dummy-desc-input');
 
-            const title = titleInput.value.trim();
-            const price = priceInput.value;
+            const title = titleInput ? titleInput.value.trim() : '';
+            const price = priceInput ? priceInput.value : '';
+            const description = descInput ? descInput.value.trim() : 'Пользовательский товар';
 
             if (!title || !price) return;
 
-            // Вызываем POST к DummyJSON для соблюдения требования
-            await createDummyProduct(title, price);
+            if (typeof createDummyProduct === 'function') {
+                await createDummyProduct(title, price, description);
+            }
 
-            // Генерируем свой уникальный ID (101, 102, 103...), чтобы ID не повторялись
             const createdProducts = getCreatedProducts();
             const uniqueId = createdProducts.length > 0 
                 ? Math.max(...createdProducts.map(p => p.id)) + 1 
@@ -356,6 +458,8 @@ document.addEventListener('DOMContentLoaded', () => {
                 id: uniqueId,
                 title: title,
                 price: Number(price),
+                description: description,
+                rating: 5.0,
                 category: 'пользовательский',
                 isCustom: true
             };
@@ -363,60 +467,73 @@ document.addEventListener('DOMContentLoaded', () => {
             createdProducts.unshift(newProduct);
             saveCreatedProducts(createdProducts);
 
-            showNotification(`Товар создан (POST): "${title}" [ID: ${uniqueId}]`, '#4ade80');
+            showNotification(`Товар создан! [ID: ${uniqueId}]`, '#4ade80');
 
-            titleInput.value = '';
-            priceInput.value = '';
+            if (titleInput) titleInput.value = '';
+            if (priceInput) priceInput.value = '';
+            if (descInput) descInput.value = '';
 
             loadDummyProducts();
         });
     }
 
-    // Обработчик редактирования и удаления
     if (dummyContainer) {
         dummyContainer.addEventListener('click', async (e) => {
+            const btnView = e.target.closest('.btn-view-dummy');
             const btnEdit = e.target.closest('.btn-edit-dummy');
             const btnDelete = e.target.closest('.btn-delete-dummy');
             const btnSave = e.target.closest('.btn-save-dummy');
             const btnCancel = e.target.closest('.btn-cancel-dummy');
+            const card = e.target.closest('.dummy-card');
 
-            // 1. Показ формы инлайн-редактирования
+            if (btnView || (card && !btnEdit && !btnDelete && !btnSave && !btnCancel)) {
+                const id = btnView ? btnView.dataset.id : card.dataset.id;
+                const product = currentLoadedProductsMap[id];
+                if (product) {
+                    openProductModal(product);
+                }
+                return;
+            }
+
             if (btnEdit) {
+                e.stopPropagation();
                 const id = btnEdit.dataset.id;
-                const card = document.getElementById(`dummy-item-${id}`);
-                const currentTitle = card.querySelector('.card-title').textContent;
-                const currentPriceText = card.querySelector('.card-price').textContent.replace('$', '');
+                const product = currentLoadedProductsMap[id] || {};
+                const targetCard = document.getElementById(`dummy-item-${id}`);
 
-                card.dataset.originalHtml = card.innerHTML;
+                targetCard.dataset.originalHtml = targetCard.innerHTML;
 
-                card.innerHTML = `
-                    <p class="label" style="color: var(--be);">Редактирование ID: ${id}</p>
+                targetCard.innerHTML = `
+                    <p class="label" style="color: var(--be, #38bdf8);">Редактирование ID: ${id}</p>
                     <div style="display: flex; flex-direction: column; gap: 8px; margin-bottom: 12px;">
-                        <input type="text" class="edit-title-input" value="${currentTitle}" style="padding: 6px; border-radius: 4px; border: 1px solid var(--border); background: var(--input-bg); color: var(--text);">
-                        <input type="number" class="edit-price-input" value="${currentPriceText}" style="padding: 6px; border-radius: 4px; border: 1px solid var(--border); background: var(--input-bg); color: var(--text);">
+                        <input type="text" class="edit-title-input" value="${product.title || ''}" placeholder="Название" style="padding: 6px; border-radius: 4px; border: 1px solid var(--border, #334155); background: var(--input-bg, #0f172a); color: var(--text, #fff);">
+                        <input type="number" class="edit-price-input" value="${product.price || ''}" placeholder="Цена" style="padding: 6px; border-radius: 4px; border: 1px solid var(--border, #334155); background: var(--input-bg, #0f172a); color: var(--text, #fff);">
+                        <textarea class="edit-desc-input" placeholder="Описание товара" style="padding: 6px; border-radius: 4px; border: 1px solid var(--border, #334155); background: var(--input-bg, #0f172a); color: var(--text, #fff); resize: vertical; min-height: 60px;">${product.description || ''}</textarea>
                     </div>
                     <div style="display: flex; gap: 8px;">
-                        <button type="button" class="tab-btn btn-save-dummy" data-id="${id}" style="background: var(--be); color: #0f172a;">💾 Сохранить</button>
+                        <button type="button" class="tab-btn btn-save-dummy" data-id="${id}" style="background: var(--be, #38bdf8); color: #0f172a;">💾 Сохранить</button>
                         <button type="button" class="tab-btn btn-cancel-dummy" data-id="${id}">❌ Отмена</button>
                     </div>
                 `;
             }
 
-            // 2. Нажатие кнопки Сохранить (PUT)
             if (btnSave) {
+                e.stopPropagation();
                 e.preventDefault();
 
                 const id = btnSave.dataset.id;
-                const card = document.getElementById(`dummy-item-${id}`);
-                const isCustom = card.dataset.isCustom === 'true';
+                const targetCard = document.getElementById(`dummy-item-${id}`);
+                const isCustom = targetCard.dataset.isCustom === 'true';
 
-                const newTitle = card.querySelector('.edit-title-input').value.trim();
-                const newPrice = card.querySelector('.edit-price-input').value;
+                const newTitle = targetCard.querySelector('.edit-title-input').value.trim();
+                const newPrice = targetCard.querySelector('.edit-price-input').value;
+                const newDesc = targetCard.querySelector('.edit-desc-input').value.trim();
 
                 if (!newTitle || !newPrice) return;
 
-                // Сетевой запрос PUT
-                updateDummyProduct(id, newTitle, newPrice);
+                if (typeof updateDummyProduct === 'function') {
+                    await updateDummyProduct(id, newTitle, newPrice, newDesc);
+                }
 
                 if (isCustom) {
                     const createdProducts = getCreatedProducts();
@@ -424,40 +541,49 @@ document.addEventListener('DOMContentLoaded', () => {
                     if (item) {
                         item.title = newTitle;
                         item.price = Number(newPrice);
+                        item.description = newDesc;
                         saveCreatedProducts(createdProducts);
                     }
+                } else {
+                    const updatedMap = getUpdatedProducts();
+                    updatedMap[id] = { title: newTitle, price: Number(newPrice), description: newDesc };
+                    saveUpdatedProducts(updatedMap);
                 }
 
-                showNotification(`Изменения сохранены!`, '#38bdf8');
-                card.querySelector('.edit-title-input') ? loadDummyProducts() : null;
+                showNotification(`Товар ID ${id} обновлен!`, '#38bdf8');
+                loadDummyProducts();
             }
 
-            // 3. Отмена редактирования
             if (btnCancel) {
+                e.stopPropagation();
                 e.preventDefault();
                 const id = btnCancel.dataset.id;
-                const card = document.getElementById(`dummy-item-${id}`);
-                if (card && card.dataset.originalHtml) {
-                    card.innerHTML = card.dataset.originalHtml;
+                const targetCard = document.getElementById(`dummy-item-${id}`);
+                if (targetCard && targetCard.dataset.originalHtml) {
+                    targetCard.innerHTML = targetCard.dataset.originalHtml;
                 }
             }
 
-            // 4. Удаление (DELETE)
             if (btnDelete) {
+                e.stopPropagation();
                 const id = btnDelete.dataset.id;
-                const card = document.getElementById(`dummy-item-${id}`);
-                const isCustom = card.dataset.isCustom === 'true';
+                const targetCard = document.getElementById(`dummy-item-${id}`);
+                const isCustom = targetCard.dataset.isCustom === 'true';
 
-                deleteDummyProduct(id);
+                if (typeof deleteDummyProduct === 'function') {
+                    await deleteDummyProduct(id);
+                }
 
                 if (isCustom) {
                     let createdProducts = getCreatedProducts();
                     createdProducts = createdProducts.filter(p => String(p.id) !== String(id));
                     saveCreatedProducts(createdProducts);
+                } else {
+                    addDeletedId(id);
                 }
 
                 showNotification(`Товар ID ${id} удален!`, '#f87171');
-                if (card) card.remove();
+                if (targetCard) targetCard.remove();
             }
         });
     }
