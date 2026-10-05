@@ -13,7 +13,7 @@
         <nav></nav>
     </header>
 
-    <!-- Основной контент (Каждая таска в своей отдельной секции-вкладке) -->
+    <!-- Основной контент -->
     <main id="tabContent">
 
         <!-- Вкладка Task 1 -->
@@ -41,7 +41,7 @@
         <section id="tab-task2">
             <h1>Task 2. Управление классами</h1>
             <div class="card">
-                <p class="label">Интерактивная карточка</p>
+                <p class="label">Интерактивная карточка (смена цвета и слов)</p>
                 <div id="demo-card" class="card" style="cursor: pointer; padding: 20px; border: 1px solid #555; border-radius: 8px; transition: all 0.3s ease;">
                     <p style="margin: 0;">Нажми на меня, чтобы переключить класс <code>active</code></p>
                 </div>
@@ -53,7 +53,7 @@
             <h1>Task 3. Генерация таблицы и подсчет цвета</h1>
             
             <div class="card">
-                <p class="label">1. Настройки генерации</p>
+                <p class="label">1. Настройки генерации таблицы</p>
                 <div style="display: flex; gap: 15px; flex-wrap: wrap; align-items: center;">
                     <label>Строк: <input type="number" id="input-rows" value="4" min="1" max="20" style="width: 60px; padding: 5px;"></label>
                     <label>Столбцов: <input type="number" id="input-cols" value="4" min="1" max="20" style="width: 60px; padding: 5px;"></label>
@@ -62,17 +62,29 @@
             </div>
 
             <div class="card">
-                <p class="label">2. Выбор цвета для покраски ячеек</p>
-                <div style="display: flex; gap: 10px; align-items: center; margin-bottom: 15px;">
-                    <span>Цвет при клике:</span>
-                    <input type="color" id="paint-color" value="#38bdf8" style="cursor: pointer; height: 35px; width: 50px;">
-                    <button id="btn-count-cells" class="tab-btn">Посчитать ячейки этого цвета</button>
+                <p class="label">2. Палитра удобных цветов</p>
+                <div style="display: flex; gap: 10px; align-items: center; flex-wrap: wrap; margin-bottom: 15px;">
+                    <span>Выбери цвет:</span>
+                    <div id="color-palette" style="display: flex; gap: 8px; flex-wrap: wrap;">
+                        <button class="color-swatch active" data-color="#38bdf8" style="background: #38bdf8;"></button>
+                        <button class="color-swatch" data-color="#4ade80" style="background: #4ade80;"></button>
+                        <button class="color-swatch" data-color="#f87171" style="background: #f87171;"></button>
+                        <button class="color-swatch" data-color="#facc15" style="background: #facc15;"></button>
+                        <button class="color-swatch" data-color="#c084fc" style="background: #c084fc;"></button>
+                        <button class="color-swatch" data-color="#fb923c" style="background: #fb923c;"></button>
+                    </div>
+                    <span style="margin-left: 10px;">или пипетка:</span>
+                    <input type="color" id="paint-color" value="#38bdf8" style="cursor: pointer; height: 32px; width: 45px; border: none; background: transparent;">
                 </div>
-                <p id="color-count-result" style="font-weight: bold; color: var(--be);"></p>
+
+                <div style="display: flex; gap: 20px; flex-wrap: wrap; margin-top: 15px; background: var(--input-bg); padding: 14px; border-radius: 6px; border: 1px solid var(--border);">
+                    <p id="color-count-result" style="font-weight: bold; color: var(--be); margin: 0;">Ячеек выбранного цвета: 0</p>
+                    <p id="total-painted-count" style="font-weight: bold; color: var(--fe); margin: 0;">Всего закрашено ячеек: 0</p>
+                </div>
             </div>
 
             <div class="card" style="overflow-x: auto;">
-                <p class="label">Таблица (кликай по ячейкам для покраски):</p>
+                <p class="label">Таблица (нажмите для покраски / повторно для снятия цвета):</p>
                 <div id="table-container"></div>
             </div>
         </section>
@@ -87,8 +99,32 @@
             </div>
         </section>
 
+        <!-- Вкладка Task 5 (DummyJSON CRUD) -->
+        <section id="tab-task5">
+            <h1>Task 5. Интеграция DummyJSON (CRUD)</h1>
+            
+            <div class="card">
+                <p class="label">Создание нового товара (POST)</p>
+                <form id="dummy-create-form" style="display: flex; gap: 10px; flex-wrap: wrap; align-items: center;">
+                    <input type="text" id="dummy-title-input" placeholder="Название товара" required style="padding: 8px; flex: 1; min-width: 180px;">
+                    <input type="number" id="dummy-price-input" placeholder="Цена ($)" required style="padding: 8px; width: 100px;">
+                    <button type="submit" class="tab-btn active">➕ Добавить товар</button>
+                </form>
+            </div>
+
+            <div class="card">
+                <div style="display: flex; justify-content: space-between; align-items: center; flex-wrap: wrap; gap: 10px; margin-bottom: 15px;">
+                    <p class="label" style="margin: 0;">Список товаров с https://dummyjson.com/products (GET)</p>
+                    <button id="btn-refresh-dummy" class="tab-btn">🔄 Обновить данные</button>
+                </div>
+                <div id="dummy-products-container" class="grid2"></div>
+            </div>
+        </section>
+
     </main>
 
+    <!-- Подключение скриптов -->
+    <script src="api.js"></script>
     <script src="app.js"></script>
     <script src="tasks.js"></script>
 </body>

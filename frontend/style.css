@@ -1,4 +1,3 @@
-/* Переменные для Темной темы (по умолчанию) */
 :root {
   --fe: #61dafb;
   --be: #38bdf8;
@@ -10,7 +9,6 @@
   --input-bg: #0f172a;
 }
 
-/* Переменные для Светлой темы (Task 4) */
 body.light-theme {
   --bg: #f8fafc;
   --card-bg: #ffffff;
@@ -83,6 +81,26 @@ h1 {
   margin-bottom: 20px;
 }
 
+.hero {
+  display: flex;
+  align-items: center;
+  gap: 20px;
+  margin-bottom: 20px;
+}
+
+.avatar {
+  width: 60px;
+  height: 60px;
+  border-radius: 50%;
+  background: var(--c, var(--fe));
+}
+
+.role {
+  color: var(--text-muted);
+  font-size: 14px;
+  margin-top: 4px;
+}
+
 .card {
   background: var(--card-bg);
   border: 1px solid var(--border);
@@ -101,6 +119,74 @@ h1 {
   font-weight: 600;
 }
 
+.tags {
+  display: flex;
+  gap: 8px;
+  flex-wrap: wrap;
+  margin-top: 8px;
+}
+
+.tag {
+  background: #334155;
+  color: #e2e8f0;
+  padding: 4px 10px;
+  border-radius: 4px;
+  font-size: 12px;
+}
+
+.list {
+  list-style: none;
+}
+
+.list li {
+  position: relative;
+  padding-left: 18px;
+  margin-bottom: 8px;
+}
+
+.list li::before {
+  content: "•";
+  position: absolute;
+  left: 0;
+  color: var(--be);
+}
+
+.grid2 {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+  gap: 20px;
+}
+
+.kids {
+  display: flex;
+  gap: 40px;
+}
+
+.node {
+  background: var(--bg);
+  border: 1px solid var(--border);
+  padding: 8px 12px;
+  border-radius: 6px;
+  margin-bottom: 8px;
+}
+
+.bar {
+  display: inline-block;
+  width: 100px;
+  height: 8px;
+  background: #334155;
+  border-radius: 4px;
+  overflow: hidden;
+  margin: 0 8px;
+  vertical-align: middle;
+}
+
+.bar b {
+  display: block;
+  height: 100%;
+  background: var(--c, var(--fe));
+}
+
 input[type="number"] {
   background: var(--input-bg);
   color: var(--text);
@@ -109,7 +195,7 @@ input[type="number"] {
 }
 
 /* ==========================================
-   Стили для Таблицы (Task 3)
+   Task 3. Стили Таблицы и Палитры
    ========================================== */
 .custom-table {
   border-collapse: collapse;
@@ -130,8 +216,27 @@ input[type="number"] {
   opacity: 0.8;
 }
 
+.color-swatch {
+  width: 32px;
+  height: 32px;
+  border-radius: 50%;
+  border: 2px solid transparent;
+  cursor: pointer;
+  transition: transform 0.2s ease, border-color 0.2s ease;
+}
+
+.color-swatch:hover {
+  transform: scale(1.15);
+}
+
+.color-swatch.active {
+  border-color: #ffffff !important;
+  box-shadow: 0 0 8px rgba(255, 255, 255, 0.8);
+  transform: scale(1.1);
+}
+
 /* ==========================================
-   Стили для Task 2
+   Task 2 и Дополнительно
    ========================================== */
 #demo-card.active {
   background-color: #1d3557 !important;
