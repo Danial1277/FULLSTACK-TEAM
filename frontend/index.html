@@ -77,7 +77,6 @@
                     <input type="color" id="paint-color" value="#38bdf8" style="cursor: pointer; height: 32px; width: 45px; border: none; background: transparent;">
                 </div>
 
-                <!-- БЛОК С ДВУМЯ СЧЕТЧИКАМИ -->
                 <div style="display: flex; gap: 20px; flex-wrap: wrap; margin-top: 15px; background: var(--input-bg); padding: 14px; border-radius: 6px; border: 1px solid var(--border);">
                     <p id="color-count-result" style="font-weight: bold; color: var(--be); margin: 0;">Ячеек выбранного цвета: 0</p>
                     <p id="total-painted-count" style="font-weight: bold; color: var(--fe); margin: 0;">Всего закрашено ячеек: 0</p>
@@ -100,8 +99,32 @@
             </div>
         </section>
 
+        <!-- Вкладка Task 5 (DummyJSON CRUD) -->
+        <section id="tab-task5">
+            <h1>Task 5. Интеграция DummyJSON (CRUD)</h1>
+            
+            <div class="card">
+                <p class="label">Создание нового товара (POST)</p>
+                <form id="dummy-create-form" style="display: flex; gap: 10px; flex-wrap: wrap; align-items: center;">
+                    <input type="text" id="dummy-title-input" placeholder="Название товара" required style="padding: 8px; flex: 1; min-width: 180px;">
+                    <input type="number" id="dummy-price-input" placeholder="Цена ($)" required style="padding: 8px; width: 100px;">
+                    <button type="submit" class="tab-btn active">➕ Добавить товар</button>
+                </form>
+            </div>
+
+            <div class="card">
+                <div style="display: flex; justify-content: space-between; align-items: center; flex-wrap: wrap; gap: 10px; margin-bottom: 15px;">
+                    <p class="label" style="margin: 0;">Список товаров с https://dummyjson.com/products (GET)</p>
+                    <button id="btn-refresh-dummy" class="tab-btn">🔄 Обновить данные</button>
+                </div>
+                <div id="dummy-products-container" class="grid2"></div>
+            </div>
+        </section>
+
     </main>
 
+    <!-- Подключение скриптов -->
+    <script src="api.js"></script>
     <script src="app.js"></script>
     <script src="tasks.js"></script>
 </body>

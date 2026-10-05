@@ -26,7 +26,6 @@ document.addEventListener('DOMContentLoaded', () => {
         btnChange.addEventListener('click', () => {
             const elem = document.getElementById('my-element');
             if (elem) elem.textContent = 'Привет, мир!';
-            else alert('Сначала создайте элемент!');
         });
     }
 
@@ -118,7 +117,7 @@ document.addEventListener('DOMContentLoaded', () => {
 
 
     // ==========================================
-    // Task 3. Таблица, палитра, снятие цвета и 2 счетчика
+    // Task 3. Таблица, палитра и счетчики
     // ==========================================
 
     const btnGenerateTable = document.getElementById('btn-generate-table');
@@ -128,10 +127,8 @@ document.addEventListener('DOMContentLoaded', () => {
     const totalPaintedCount = document.getElementById('total-painted-count');
     const colorPalette = document.getElementById('color-palette');
 
-    // Текущий выбранный цвет в формате HEX (например, #38bdf8)
     let currentColor = paintColorInput ? paintColorInput.value.toLowerCase() : '#38bdf8';
 
-    // Функция пересчета ВСЕХ счетчиков
     function updateCounters() {
         const cells = document.querySelectorAll('.custom-table td');
         let selectedColorCount = 0;
@@ -140,9 +137,9 @@ document.addEventListener('DOMContentLoaded', () => {
         cells.forEach(cell => {
             const cellColor = cell.getAttribute('data-color');
             if (cellColor) {
-                totalPainted++; // Считаем любую закрашенную ячейку
+                totalPainted++;
                 if (cellColor.toLowerCase() === currentColor.toLowerCase()) {
-                    selectedColorCount++; // Считаем только ячейки с текущим выбранным цветом
+                    selectedColorCount++;
                 }
             }
         });
@@ -155,7 +152,6 @@ document.addEventListener('DOMContentLoaded', () => {
         }
     }
 
-    // 1. Выбор цвета из круглых кнопок палитры
     if (colorPalette) {
         colorPalette.addEventListener('click', (e) => {
             const swatch = e.target.closest('.color-swatch');
@@ -171,7 +167,6 @@ document.addEventListener('DOMContentLoaded', () => {
         });
     }
 
-    // 2. Выбор цвета через инпут пипетки
     if (paintColorInput) {
         paintColorInput.addEventListener('input', (e) => {
             currentColor = e.target.value.toLowerCase();
@@ -180,7 +175,6 @@ document.addEventListener('DOMContentLoaded', () => {
         });
     }
 
-    // 3. Генерация таблицы
     function generateTable(rows, cols) {
         if (!tableContainer) return;
         tableContainer.innerHTML = '';
@@ -195,21 +189,17 @@ document.addEventListener('DOMContentLoaded', () => {
                 const td = document.createElement('td');
                 td.textContent = `Ячейка ${cellIndex++}`;
 
-                // Логика клика по ячейке (Покраска / Снятие цвета)
                 td.addEventListener('click', () => {
                     const previousColor = td.getAttribute('data-color');
 
-                    // Если ячейка уже закрашена ЭТИМ ЖЕ цветом -> СНИМАЕМ ЦВЕТ
                     if (previousColor && previousColor.toLowerCase() === currentColor.toLowerCase()) {
                         td.style.backgroundColor = '';
                         td.removeAttribute('data-color');
                     } else {
-                        // Иначе закрашиваем в выбранный цвет
                         td.style.backgroundColor = currentColor;
                         td.setAttribute('data-color', currentColor);
                     }
 
-                    // Сразу пересчитываем счетчики
                     updateCounters();
                 });
 
@@ -229,7 +219,6 @@ document.addEventListener('DOMContentLoaded', () => {
             generateTable(rows, cols);
         });
 
-        // Запуск по умолчанию
         generateTable(4, 4);
     }
 
@@ -252,4 +241,251 @@ document.addEventListener('DOMContentLoaded', () => {
             }
         });
     }
+
+
+    // ==========================================
+    // Task 5. DummyJSON CRUD с постоянным сохранением в localStorage
+    // ==========================================
+
+    const dummyContainer = document.getElementById('dummy-products-container');
+    const dummyForm = document.getElementById('dummy-create-form');
+    const btnRefreshDummy = document.getElementById('btn-refresh-dummy');
+
+    function showNotification(message, color = '#4ade80') {
+        let toast = document.getElementById('toast-notification');
+        if (!toast) {
+            toast = document.createElement('div');
+            toast.id = 'toast-notification';
+            toast.style.position = 'fixed';
+            toast.style.bottom = '20px';
+            toast.style.right = '20px';
+            toast.style.padding = '12px 20px';
+            toast.style.borderRadius = '6px';
+            toast.style.color = '#0f172a';
+            toast.style.fontWeight = 'bold';
+            toast.style.zIndex = '9999';
+            toast.style.boxShadow = '0 4px 12px rgba(0,0,0,0.3)';
+            toast.style.transition = 'opacity 0.3s ease';
+            document.body.appendChild(toast);
+        }
+
+        toast.style.backgroundColor = color;
+        toast.textContent = message;
+        toast.style.opacity = '1';
+
+        setTimeout(() => {
+            toast.style.opacity = '0';
+        }, 3000);
+    }
+
+    // Методы работы с локальным хранилищем
+    function getLocalProducts() {
+        return JSON.parse(localStorage.getItem('my_created_products') || '[]');
+    }
+
+    function saveLocalProducts(products) {
+        localStorage.setItem('my_created_products', JSON.stringify(products));
+    }
+
+    function getUpdatedProducts() {
+        return JSON.parse(localStorage.getItem('my_updated_products') || '{}');
+    }
+
+    function saveUpdatedProducts(updatedObj) {
+        localStorage.setItem('my_updated_products', JSON.stringify(updatedObj));
+    }
+
+    function getDeletedIds() {
+        return JSON.parse(localStorage.getItem('my_deleted_ids') || '[]');
+    }
+
+    function addDeletedId(id) {
+        const ids = getDeletedIds();
+        ids.push(String(id));
+        localStorage.setItem('my_deleted_ids', JSON.stringify(ids));
+    }
+
+    // Генерация карточки товара
+    function renderProductCard(p) {
+        const isCustom = p.isCustom;
+        return `
+            <div class="card dummy-card" id="dummy-item-${p.id}" data-id="${p.id}" data-is-custom="${isCustom ? 'true' : 'false'}" style="${isCustom ? 'border-color: #4ade80;' : ''}">
+                <p class="label" style="${isCustom ? 'color: #4ade80;' : ''}">ID: ${p.id} ${isCustom ? '(Созданный)' : '| ' + (p.category || 'товар')}</p>
+                <h3 style="margin-bottom: 8px;" class="card-title">${p.title}</h3>
+                <p style="font-size: 18px; font-weight: bold; color: var(--be); margin-bottom: 12px;" class="card-price">$${p.price}</p>
+                <div style="display: flex; gap: 8px; flex-wrap: wrap;" class="card-actions">
+                    <button type="button" class="tab-btn btn-edit-dummy" data-id="${p.id}">✏️ Изменить</button>
+                    <button type="button" class="tab-btn btn-delete-dummy" data-id="${p.id}" style="border-color: #f87171; color: #f87171;">🗑️ Удалить</button>
+                </div>
+            </div>
+        `;
+    }
+
+    // Полный рендер всех товаров (Созданные вручную + Загруженные из API)
+    async function loadDummyProducts() {
+        if (!dummyContainer) return;
+        dummyContainer.innerHTML = '<p style="color: var(--text-muted)">Загрузка товаров с DummyJSON...</p>';
+
+        const apiProducts = await getDummyProducts(6, 0) || [];
+        const createdProducts = getLocalProducts();
+        const updatedMap = getUpdatedProducts();
+        const deletedIds = getDeletedIds();
+
+        // 1. Фильтруем и обновляем сетевые товары из DummyJSON
+        const filteredApiProducts = apiProducts
+            .filter(p => !deletedIds.includes(String(p.id)))
+            .map(p => updatedMap[p.id] ? { ...p, ...updatedMap[p.id] } : p);
+
+        // 2. Объединяем: Созданные пользователем ставим в самое начало
+        const allProducts = [...createdProducts, ...filteredApiProducts];
+
+        if (allProducts.length === 0) {
+            dummyContainer.innerHTML = '<p style="color: var(--text-muted)">Список товаров пуст</p>';
+            return;
+        }
+
+        dummyContainer.innerHTML = allProducts.map(p => renderProductCard(p)).join('');
+    }
+
+    if (btnRefreshDummy) {
+        btnRefreshDummy.addEventListener('click', loadDummyProducts);
+    }
+
+    // Создание товара (POST + Гарантированное сохранение в localStorage)
+    if (dummyForm) {
+        dummyForm.addEventListener('submit', async (e) => {
+            e.preventDefault();
+            const titleInput = document.getElementById('dummy-title-input');
+            const priceInput = document.getElementById('dummy-price-input');
+
+            const title = titleInput.value.trim();
+            const price = priceInput.value;
+
+            if (!title || !price) return;
+
+            // Вызываем POST к DummyJSON
+            const apiRes = await createDummyProduct(title, price);
+
+            const newProduct = {
+                id: apiRes && apiRes.id ? apiRes.id : Date.now(),
+                title: title,
+                price: Number(price),
+                category: 'пользовательский',
+                isCustom: true
+            };
+
+            // Записываем в localStorage
+            const createdProducts = getLocalProducts();
+            createdProducts.unshift(newProduct);
+            saveLocalProducts(createdProducts);
+
+            showNotification(`Товар сохранен локально (POST): "${title}"`, '#4ade80');
+
+            titleInput.value = '';
+            priceInput.value = '';
+
+            // Обновляем список
+            loadDummyProducts();
+        });
+    }
+
+    // Обработчик редактирования и удаления карточек
+    if (dummyContainer) {
+        dummyContainer.addEventListener('click', async (e) => {
+            const btnEdit = e.target.closest('.btn-edit-dummy');
+            const btnDelete = e.target.closest('.btn-delete-dummy');
+            const btnSave = e.target.closest('.btn-save-dummy');
+            const btnCancel = e.target.closest('.btn-cancel-dummy');
+
+            // 1. Открытие инлайн формы
+            if (btnEdit) {
+                const id = btnEdit.dataset.id;
+                const card = document.getElementById(`dummy-item-${id}`);
+                const currentTitle = card.querySelector('.card-title').textContent;
+                const currentPriceText = card.querySelector('.card-price').textContent.replace('$', '');
+
+                card.dataset.originalHtml = card.innerHTML;
+
+                card.innerHTML = `
+                    <p class="label" style="color: var(--be);">Редактирование ID: ${id}</p>
+                    <div style="display: flex; flex-direction: column; gap: 8px; margin-bottom: 12px;">
+                        <input type="text" class="edit-title-input" value="${currentTitle}" style="padding: 6px; border-radius: 4px; border: 1px solid var(--border); background: var(--input-bg); color: var(--text);">
+                        <input type="number" class="edit-price-input" value="${currentPriceText}" style="padding: 6px; border-radius: 4px; border: 1px solid var(--border); background: var(--input-bg); color: var(--text);">
+                    </div>
+                    <div style="display: flex; gap: 8px;">
+                        <button type="button" class="tab-btn btn-save-dummy" data-id="${id}" style="background: var(--be); color: #0f172a;">💾 Сохранить</button>
+                        <button type="button" class="tab-btn btn-cancel-dummy" data-id="${id}">❌ Отмена</button>
+                    </div>
+                `;
+            }
+
+            // 2. Нажатие кнопки Сохранить (PUT + Перезапись в localStorage)
+            if (btnSave) {
+                e.preventDefault();
+
+                const id = btnSave.dataset.id;
+                const card = document.getElementById(`dummy-item-${id}`);
+                const isCustom = card.dataset.isCustom === 'true';
+
+                const newTitle = card.querySelector('.edit-title-input').value.trim();
+                const newPrice = card.querySelector('.edit-price-input').value;
+
+                if (!newTitle || !newPrice) return;
+
+                // Запрос PUT к сетевому API
+                updateDummyProduct(id, newTitle, newPrice);
+
+                if (isCustom) {
+                    // Обновляем в списке созданных вручную
+                    const createdProducts = getLocalProducts();
+                    const item = createdProducts.find(p => String(p.id) === String(id));
+                    if (item) {
+                        item.title = newTitle;
+                        item.price = Number(newPrice);
+                        saveLocalProducts(createdProducts);
+                    }
+                } else {
+                    // Сохраняем патч для стандартов из DummyJSON
+                    const updatedMap = getUpdatedProducts();
+                    updatedMap[id] = { title: newTitle, price: Number(newPrice) };
+                    saveUpdatedProducts(updatedMap);
+                }
+
+                showNotification(`Изменения для ID ${id} успешно сохранены!`, '#38bdf8');
+                loadDummyProducts();
+            }
+
+            // 3. Отмена редактирования
+            if (btnCancel) {
+                e.preventDefault();
+                const id = btnCancel.dataset.id;
+                const card = document.getElementById(`dummy-item-${id}`);
+                if (card && card.dataset.originalHtml) {
+                    card.innerHTML = card.dataset.originalHtml;
+                }
+            }
+
+            // 4. Удаление (DELETE + Фиксация в localStorage)
+            if (btnDelete) {
+                const id = btnDelete.dataset.id;
+                const card = document.getElementById(`dummy-item-${id}`);
+                const isCustom = card.dataset.isCustom === 'true';
+
+                deleteDummyProduct(id);
+
+                if (isCustom) {
+                    let createdProducts = getLocalProducts();
+                    createdProducts = createdProducts.filter(p => String(p.id) !== String(id));
+                    saveLocalProducts(createdProducts);
+                } else {
+                    addDeletedId(id);
+                }
+
+                showNotification(`Товар ID ${id} удален!`, '#f87171');
+                if (card) card.remove();
+            }
+        });
+    }
+
+    loadDummyProducts();
 });
