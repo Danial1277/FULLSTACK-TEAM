@@ -244,7 +244,7 @@ document.addEventListener('DOMContentLoaded', () => {
 
 
     // ==========================================
-    // Task 5. DummyJSON (С Рейтингом, Описанием и Модальным окном)
+    // Task 5. DummyJSON (Товары, Рейтинги, Редактирование, Модальное окно)
     // ==========================================
 
     const dummyContainer = document.getElementById('dummy-products-container');
@@ -366,7 +366,10 @@ document.addEventListener('DOMContentLoaded', () => {
 
     function renderProductCard(p) {
         const isCustom = p.isCustom;
-        const rating = p.rating || 4.5;
+        const rating = (p.rating !== undefined && p.rating !== null)
+            ? p.rating
+            : Number((Math.random() * (5.0 - 3.0) + 3.0).toFixed(1));
+
         const description = p.description || 'Нажмите "Подробнее", чтобы просмотреть описание товара.';
 
         return `
@@ -385,9 +388,9 @@ document.addEventListener('DOMContentLoaded', () => {
                 </p>
 
                 <div style="display: flex; gap: 8px; flex-wrap: wrap;" class="card-actions">
-                    <button type="button" class="tab-btn btn-view-dummy" data-id="${p.id}" style="background: rgba(56, 189, 248, 0.1); border-color: #38bdf8; color: #38bdf8;">👁️</button>
-                    <button type="button" class="tab-btn btn-edit-dummy" data-id="${p.id}">✏️</button>
-                    <button type="button" class="tab-btn btn-delete-dummy" data-id="${p.id}" style="border-color: #f87171; color: #f87171;">🗑️</button>
+                    <button type="button" class="tab-btn btn-view-dummy" data-id="${p.id}" style="background: rgba(56, 189, 248, 0.1); border-color: #38bdf8; color: #38bdf8;">👁️ Подробнее</button>
+                    <button type="button" class="tab-btn btn-edit-dummy" data-id="${p.id}">✏️ Изменить</button>
+                    <button type="button" class="tab-btn btn-delete-dummy" data-id="${p.id}" style="border-color: #f87171; color: #f87171;">🗑️ Удалить</button>
                 </div>
             </div>
         `;
@@ -445,13 +448,18 @@ document.addEventListener('DOMContentLoaded', () => {
 
             if (!title || !price) return;
 
+            let apiRes = null;
             if (typeof createDummyProduct === 'function') {
-                await createDummyProduct(title, price, description);
+                apiRes = await createDummyProduct(title, price, description);
             }
 
+            const randomRating = (apiRes && apiRes.rating)
+                ? apiRes.rating
+                : Number((Math.random() * (5.0 - 3.0) + 3.0).toFixed(1));
+
             const createdProducts = getCreatedProducts();
-            const uniqueId = createdProducts.length > 0 
-                ? Math.max(...createdProducts.map(p => p.id)) + 1 
+            const uniqueId = createdProducts.length > 0
+                ? Math.max(...createdProducts.map(p => p.id)) + 1
                 : 101;
 
             const newProduct = {
@@ -459,7 +467,7 @@ document.addEventListener('DOMContentLoaded', () => {
                 title: title,
                 price: Number(price),
                 description: description,
-                rating: 5.0,
+                rating: randomRating,
                 category: 'пользовательский',
                 isCustom: true
             };
@@ -467,7 +475,7 @@ document.addEventListener('DOMContentLoaded', () => {
             createdProducts.unshift(newProduct);
             saveCreatedProducts(createdProducts);
 
-            showNotification(`Товар создан! [ID: ${uniqueId}]`, '#4ade80');
+            showNotification(`Товар создан! Рейтинг: ${randomRating} ★`, '#4ade80');
 
             if (titleInput) titleInput.value = '';
             if (priceInput) priceInput.value = '';
@@ -486,7 +494,9 @@ document.addEventListener('DOMContentLoaded', () => {
             const btnCancel = e.target.closest('.btn-cancel-dummy');
             const card = e.target.closest('.dummy-card');
 
-            if (btnView || (card && !btnEdit && !btnDelete && !btnSave && !btnCancel)) {
+            const isEditingMode = card && card.querySelector('.edit-title-input');
+
+            if (!isEditingMode && (btnView || (card && !btnEdit && !btnDelete && !btnSave && !btnCancel))) {
                 const id = btnView ? btnView.dataset.id : card.dataset.id;
                 const product = currentLoadedProductsMap[id];
                 if (product) {
@@ -508,13 +518,15 @@ document.addEventListener('DOMContentLoaded', () => {
                     <div style="display: flex; flex-direction: column; gap: 8px; margin-bottom: 12px;">
                         <input type="text" class="edit-title-input" value="${product.title || ''}" placeholder="Название" style="padding: 6px; border-radius: 4px; border: 1px solid var(--border, #334155); background: var(--input-bg, #0f172a); color: var(--text, #fff);">
                         <input type="number" class="edit-price-input" value="${product.price || ''}" placeholder="Цена" style="padding: 6px; border-radius: 4px; border: 1px solid var(--border, #334155); background: var(--input-bg, #0f172a); color: var(--text, #fff);">
+                        <input type="number" step="0.1" min="1" max="5" class="edit-rating-input" value="${product.rating || 4.5}" placeholder="Рейтинг (1.0 - 5.0)" style="padding: 6px; border-radius: 4px; border: 1px solid var(--border, #334155); background: var(--input-bg, #0f172a); color: var(--text, #fff);">
                         <textarea class="edit-desc-input" placeholder="Описание товара" style="padding: 6px; border-radius: 4px; border: 1px solid var(--border, #334155); background: var(--input-bg, #0f172a); color: var(--text, #fff); resize: vertical; min-height: 60px;">${product.description || ''}</textarea>
                     </div>
                     <div style="display: flex; gap: 8px;">
-                        <button type="button" class="tab-btn btn-save-dummy" data-id="${id}" style="background: var(--be, #38bdf8); color: #0f172a;">💾</button>
-                        <button type="button" class="tab-btn btn-cancel-dummy" data-id="${id}">❌</button>
+                        <button type="button" class="tab-btn btn-save-dummy" data-id="${id}" style="background: var(--be, #38bdf8); color: #0f172a;">💾 Сохранить</button>
+                        <button type="button" class="tab-btn btn-cancel-dummy" data-id="${id}">❌ Отмена</button>
                     </div>
                 `;
+                return;
             }
 
             if (btnSave) {
@@ -527,12 +539,13 @@ document.addEventListener('DOMContentLoaded', () => {
 
                 const newTitle = targetCard.querySelector('.edit-title-input').value.trim();
                 const newPrice = targetCard.querySelector('.edit-price-input').value;
+                const newRating = parseFloat(targetCard.querySelector('.edit-rating-input').value) || 4.5;
                 const newDesc = targetCard.querySelector('.edit-desc-input').value.trim();
 
                 if (!newTitle || !newPrice) return;
 
                 if (typeof updateDummyProduct === 'function') {
-                    await updateDummyProduct(id, newTitle, newPrice, newDesc);
+                    await updateDummyProduct(id, newTitle, newPrice, newDesc, newRating);
                 }
 
                 if (isCustom) {
@@ -541,17 +554,19 @@ document.addEventListener('DOMContentLoaded', () => {
                     if (item) {
                         item.title = newTitle;
                         item.price = Number(newPrice);
+                        item.rating = newRating;
                         item.description = newDesc;
                         saveCreatedProducts(createdProducts);
                     }
                 } else {
                     const updatedMap = getUpdatedProducts();
-                    updatedMap[id] = { title: newTitle, price: Number(newPrice), description: newDesc };
+                    updatedMap[id] = { title: newTitle, price: Number(newPrice), rating: newRating, description: newDesc };
                     saveUpdatedProducts(updatedMap);
                 }
 
                 showNotification(`Товар ID ${id} обновлен!`, '#38bdf8');
                 loadDummyProducts();
+                return;
             }
 
             if (btnCancel) {
@@ -562,6 +577,7 @@ document.addEventListener('DOMContentLoaded', () => {
                 if (targetCard && targetCard.dataset.originalHtml) {
                     targetCard.innerHTML = targetCard.dataset.originalHtml;
                 }
+                return;
             }
 
             if (btnDelete) {
@@ -589,4 +605,200 @@ document.addEventListener('DOMContentLoaded', () => {
     }
 
     loadDummyProducts();
+
+
+    // ==========================================
+    // Task 6. Загрузка 200 пользователей, Назначение задач и Профиль
+    // ==========================================
+
+    const usersListContainer = document.getElementById('users-list-container');
+    const selectedUserInfo = document.getElementById('selected-user-info');
+    const assignTaskForm = document.getElementById('assign-task-form');
+    const taskTextInput = document.getElementById('task-text-input');
+    const assignedTasksContainer = document.getElementById('assigned-tasks-container');
+
+    let allUsersCache = [];
+    let selectedUserId = null;
+
+    function openUserProfileModal(user) {
+        let modal = document.getElementById('user-profile-modal');
+        if (!modal) {
+            modal = document.createElement('div');
+            modal.id = 'user-profile-modal';
+            modal.style.position = 'fixed';
+            modal.style.top = '0';
+            modal.style.left = '0';
+            modal.style.width = '100vw';
+            modal.style.height = '100vh';
+            modal.style.backgroundColor = 'rgba(0,0,0,0.7)';
+            modal.style.display = 'flex';
+            modal.style.justifyContent = 'center';
+            modal.style.alignItems = 'center';
+            modal.style.zIndex = '10000';
+            document.body.appendChild(modal);
+        }
+
+        modal.innerHTML = `
+            <div style="background: var(--card-bg, #1e293b); padding: 24px; border-radius: 12px; max-width: 400px; width: 90%; border: 1px solid var(--border, #334155); box-shadow: 0 10px 25px rgba(0,0,0,0.5); color: var(--text, #f8fafc); position: relative; text-align: center;">
+                <button type="button" id="btn-close-user-modal" style="position: absolute; top: 12px; right: 12px; background: transparent; border: none; font-size: 20px; color: #94a3b8; cursor: pointer;">✕</button>
+                
+                <img src="${user.image || 'https://via.placeholder.com/100'}" alt="Avatar" style="width: 90px; height: 90px; border-radius: 50%; object-fit: cover; border: 2px solid #38bdf8; margin-bottom: 12px;">
+                
+                <h2 style="margin-bottom: 4px; font-size: 20px;">${user.firstName} ${user.lastName}</h2>
+                <p style="color: #38bdf8; font-size: 14px; margin-bottom: 12px;">@${user.username || 'user'} | ${user.company?.title || 'Сотрудник'}</p>
+                
+                <div style="text-align: left; background: rgba(255,255,255,0.03); padding: 12px; border-radius: 8px; font-size: 14px; display: flex; flex-direction: column; gap: 6px; margin-bottom: 16px;">
+                    <div><strong>Email:</strong> ${user.email}</div>
+                    <div><strong>Телефон:</strong> ${user.phone || 'Не указан'}</div>
+                    <div><strong>Возраст:</strong> ${user.age} лет</div>
+                    <div><strong>Город:</strong> ${user.address?.city || 'Не указан'}</div>
+                    <div><strong>Компания:</strong> ${user.company?.name || 'Не указана'}</div>
+                </div>
+
+                <button type="button" class="tab-btn" id="btn-user-modal-close" style="width: 100%;">Закрыть профиль</button>
+            </div>
+        `;
+
+        modal.style.display = 'flex';
+
+        const closeModal = () => { modal.style.display = 'none'; };
+        document.getElementById('btn-close-user-modal').onclick = closeModal;
+        document.getElementById('btn-user-modal-close').onclick = closeModal;
+        modal.onclick = (e) => { if (e.target === modal) closeModal(); };
+    }
+
+    function getAssignedTasks() {
+        return JSON.parse(localStorage.getItem('my_assigned_tasks') || '[]');
+    }
+
+    function saveAssignedTasks(tasks) {
+        localStorage.setItem('my_assigned_tasks', JSON.stringify(tasks));
+    }
+
+    function renderAssignedTasks() {
+        if (!assignedTasksContainer) return;
+        const tasks = getAssignedTasks();
+
+        if (tasks.length === 0) {
+            assignedTasksContainer.innerHTML = '<p style="color: var(--text-muted, #888); font-size: 13px;">Задач пока нет</p>';
+            return;
+        }
+
+        assignedTasksContainer.innerHTML = tasks.map(t => `
+            <div style="background: rgba(255,255,255,0.05); padding: 8px 10px; border-radius: 6px; font-size: 13px; display: flex; justify-content: space-between; align-items: center; border-left: 3px solid #4ade80;">
+                <div>
+                    <strong>${t.userName}:</strong> ${t.text}
+                </div>
+                <button type="button" class="tab-btn btn-delete-task" data-id="${t.id}" style="background: transparent; border: none; color: #f87171; cursor: pointer; font-size: 14px;">✕</button>
+            </div>
+        `).join('');
+    }
+
+    async function loadTaskUsers() {
+        if (!usersListContainer) return;
+        usersListContainer.innerHTML = '<p style="color: var(--text-muted, #888)">Загрузка 200 пользователей...</p>';
+
+        if (typeof getDummyUsers === 'function') {
+            allUsersCache = await getDummyUsers(200);
+        }
+
+        if (!allUsersCache || allUsersCache.length === 0) {
+            usersListContainer.innerHTML = '<p style="color: #f87171">Не удалось загрузить пользователей</p>';
+            return;
+        }
+
+        usersListContainer.innerHTML = allUsersCache.map(u => `
+            <div class="user-item-row" data-id="${u.id}" style="display: flex; align-items: center; justify-content: space-between; padding: 8px 12px; background: rgba(255,255,255,0.03); border-radius: 6px; cursor: pointer; transition: background 0.2s; border: 1px solid transparent;" onmouseover="this.style.background='rgba(56,189,248,0.1)'" onmouseout="this.style.background='rgba(255,255,255,0.03)'">
+                <div style="display: flex; align-items: center; gap: 10px; pointer-events: none;">
+                    <img src="${u.image}" style="width: 32px; height: 32px; border-radius: 50%; object-fit: cover;">
+                    <div>
+                        <div style="font-weight: bold; font-size: 14px;">${u.firstName} ${u.lastName}</div>
+                        <div style="font-size: 12px; color: var(--text-muted, #888);">${u.email}</div>
+                    </div>
+                </div>
+                <button type="button" class="tab-btn btn-view-profile" data-id="${u.id}" style="font-size: 11px; padding: 4px 8px; background: rgba(56,189,248,0.15); border-color: #38bdf8; color: #38bdf8;">Профиль</button>
+            </div>
+        `).join('');
+    }
+
+    if (usersListContainer) {
+        usersListContainer.addEventListener('click', (e) => {
+            const btnProfile = e.target.closest('.btn-view-profile');
+            const userRow = e.target.closest('.user-item-row');
+
+            if (btnProfile) {
+                e.stopPropagation();
+                const userId = btnProfile.dataset.id;
+                const user = allUsersCache.find(u => String(u.id) === String(userId));
+                if (user) openUserProfileModal(user);
+                return;
+            }
+
+            if (userRow) {
+                const userId = userRow.dataset.id;
+                const user = allUsersCache.find(u => String(u.id) === String(userId));
+                if (user) {
+                    selectedUserId = user.id;
+                    document.querySelectorAll('.user-item-row').forEach(row => {
+                        row.style.borderColor = 'transparent';
+                    });
+                    userRow.style.borderColor = '#38bdf8';
+
+                    if (selectedUserInfo) {
+                        selectedUserInfo.innerHTML = `
+                            <p style="margin: 0; color: #4ade80; font-weight: bold;">Выбран: ${user.firstName} ${user.lastName}</p>
+                            <p style="margin: 4px 0 0 0; font-size: 13px; color: var(--text-muted, #888);">${user.email} (${user.company?.title || 'Без должности'})</p>
+                        `;
+                    }
+                }
+            }
+        });
+    }
+
+    if (assignTaskForm) {
+        assignTaskForm.addEventListener('submit', (e) => {
+            e.preventDefault();
+            if (!selectedUserId) {
+                alert('Пожалуйста, выберите пользователя из списка слева!');
+                return;
+            }
+
+            const text = taskTextInput ? taskTextInput.value.trim() : '';
+            if (!text) return;
+
+            const user = allUsersCache.find(u => String(u.id) === String(selectedUserId));
+            const userName = user ? `${user.firstName} ${user.lastName}` : `ID: ${selectedUserId}`;
+
+            const tasks = getAssignedTasks();
+            const newTask = {
+                id: Date.now(),
+                userId: selectedUserId,
+                userName: userName,
+                text: text
+            };
+
+            tasks.unshift(newTask);
+            saveAssignedTasks(tasks);
+
+            if (taskTextInput) taskTextInput.value = '';
+            renderAssignedTasks();
+            showNotification(`Задача успешно назначена пользователю ${userName}!`, '#4ade80');
+        });
+    }
+
+    if (assignedTasksContainer) {
+        assignedTasksContainer.addEventListener('click', (e) => {
+            const btnDelete = e.target.closest('.btn-delete-task');
+            if (btnDelete) {
+                const taskId = btnDelete.dataset.id;
+                let tasks = getAssignedTasks();
+                tasks = tasks.filter(t => String(t.id) !== String(taskId));
+                saveAssignedTasks(tasks);
+                renderAssignedTasks();
+            }
+        });
+    }
+
+    loadTaskUsers();
+    renderAssignedTasks();
 });
