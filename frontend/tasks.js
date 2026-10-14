@@ -660,8 +660,8 @@ document.addEventListener('DOMContentLoaded', () => {
                 </div>
 
                 <div style="display: flex; align-items: center; gap: 10px;">
-                    <button type="button" class="tab-btn btn-edit-task" data-id="${t.id}" style="padding: 6px 12px; font-size: 13px;">✏️ Изменить</button>
-                    <button type="button" class="tab-btn btn-delete-task" data-id="${t.id}" style="padding: 6px 12px; font-size: 13px; border-color: rgba(248, 113, 113, 0.4); color: #f87171;">🗑️ Удалить</button>
+                    <button type="button" class="tab-btn btn-edit-task" data-id="${t.id}" style="padding: 6px 12px; font-size: 13px;">✏️</button>
+                    <button type="button" class="tab-btn btn-delete-task" data-id="${t.id}" style="padding: 6px 12px; font-size: 13px; border-color: rgba(248, 113, 113, 0.4); color: #f87171;">🗑️</button>
                     
                     <button type="button" class="btn-user-badge btn-view-user-modal" data-userid="${t.userId}">
                         👤 ${t.userName}
