@@ -94,8 +94,10 @@
 
                 <div
                     style="display: flex; gap: 20px; flex-wrap: wrap; margin-top: 15px; background: var(--input-bg); padding: 14px; border-radius: 6px; border: 1px solid var(--border);">
-                    <p id="color-count-result" style="font-weight: bold; color: var(--be); margin: 0;">Ячеек выбранного цвета: 0</p>
-                    <p id="total-painted-count" style="font-weight: bold; color: var(--fe); margin: 0;">Всего закрашено ячеек: 0</p>
+                    <p id="color-count-result" style="font-weight: bold; color: var(--be); margin: 0;">Ячеек выбранного
+                        цвета: 0</p>
+                    <p id="total-painted-count" style="font-weight: bold; color: var(--fe); margin: 0;">Всего закрашено
+                        ячеек: 0</p>
                 </div>
             </div>
 
@@ -110,8 +112,10 @@
             <h1>Task 4. Переключатель темы</h1>
             <div class="card">
                 <p class="label">Управление цветовым режимом приложения</p>
-                <p style="margin-bottom: 15px;">Нажмите кнопку ниже, чтобы переключиться между темной и светлой темой интерфейса:</p>
-                <button id="theme-toggle" class="tab-btn active" style="font-size: 16px; padding: 10px 20px;">🌙 Включить светлую тему</button>
+                <p style="margin-bottom: 15px;">Нажмите кнопку ниже, чтобы переключиться между темной и светлой темой
+                    интерфейса:</p>
+                <button id="theme-toggle" class="tab-btn active" style="font-size: 16px; padding: 10px 20px;">🌙
+                    Включить светлую тему</button>
             </div>
         </section>
 
@@ -131,7 +135,8 @@
             </div>
 
             <div class="card">
-                <div style="display: flex; justify-content: space-between; align-items: center; flex-wrap: wrap; gap: 10px; margin-bottom: 15px;">
+                <div
+                    style="display: flex; justify-content: space-between; align-items: center; flex-wrap: wrap; gap: 10px; margin-bottom: 15px;">
                     <p class="label" style="margin: 0;">Список товаров с https://dummyjson.com/products (GET)</p>
                     <button id="btn-refresh-dummy" class="tab-btn">🔄</button>
                 </div>
@@ -140,35 +145,43 @@
         </section>
 
         <!-- Вкладка Task 6 (Пользователи и Задачи) -->
+        <!-- Вкладка Task 6 (Стильный Тудушник) -->
         <section id="tab-task6" class="tab-section" style="display: none;">
-            <h1>Task 6. Пользователи и Задачи</h1>
-            
-            <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 20px; margin-top: 15px;">
-                <!-- Левая колонка: Список пользователей -->
-                <div class="card">
-                    <h3>Список пользователей (200)</h3>
-                    <div id="users-list-container" style="max-height: 400px; overflow-y: auto; display: flex; flex-direction: column; gap: 8px; margin-top: 10px; padding-right: 5px;">
-                        <p style="color: var(--text-muted, #888);">Загрузка пользователей...</p>
-                    </div>
-                </div>
+            <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 20px;">
+                <h1
+                    style="margin: 0; font-size: 26px; font-weight: 700; background: linear-gradient(90deg, #38bdf8, #818cf8); -webkit-background-clip: text; -webkit-text-fill-color: transparent;">
+                    ✨ Тудушник задач
+                </h1>
+                <span id="tasks-count-badge"
+                    style="background: rgba(56, 189, 248, 0.15); color: #38bdf8; border: 1px solid rgba(56, 189, 248, 0.3); padding: 4px 12px; border-radius: 20px; font-size: 13px; font-weight: 600;">
+                    Всего задач: 0
+                </span>
+            </div>
 
-                <!-- Правая колонка: Назначение задачи -->
-                <div class="card">
-                    <h3>Назначить задачу</h3>
-                    <div id="selected-user-info" style="margin-bottom: 15px; padding: 10px; background: rgba(56, 189, 248, 0.1); border-radius: 6px; border: 1px solid #38bdf8;">
-                        <p style="margin: 0; color: #38bdf8; font-weight: bold;">Пользователь не выбран</p>
-                        <p style="margin: 4px 0 0 0; font-size: 13px; color: var(--text-muted, #888);">Кликните на пользователя слева, чтобы выбрать его</p>
-                    </div>
+            <!-- Карточка добавления задачи -->
+            <div class="todo-card" style="margin-bottom: 20px;">
+                <p class="label"
+                    style="margin-top: 0; margin-bottom: 12px; color: #94a3b8; font-size: 13px; text-transform: uppercase; letter-spacing: 0.5px;">
+                    ➕ Создать новую задачу</p>
+                <form id="assign-task-form" style="display: flex; gap: 12px; flex-wrap: wrap;">
+                    <input type="text" id="task-text-input" class="todo-input" placeholder="Что нужно сделать?" required
+                        style="flex: 2; min-width: 220px;">
 
-                    <form id="assign-task-form" style="display: flex; flex-direction: column; gap: 10px;">
-                        <textarea id="task-text-input" placeholder="Введите текст задачи для пользователя..." style="padding: 8px; border-radius: 6px; border: 1px solid var(--border, #334155); background: var(--input-bg, #0f172a); color: var(--text, #fff); resize: vertical; min-height: 80px;" required></textarea>
-                        <button type="submit" class="tab-btn" style="background: #4ade80; color: #0f172a; font-weight: bold;">Назначить задачу</button>
-                    </form>
+                    <select id="task-user-select" class="todo-select" required style="flex: 1; min-width: 180px;">
+                        <option value="">Назначить исполнителя...</option>
+                    </select>
 
-                    <h4 style="margin-top: 20px; margin-bottom: 8px;">Список назначенных задач</h4>
-                    <div id="assigned-tasks-container" style="max-height: 180px; overflow-y: auto; display: flex; flex-direction: column; gap: 6px;">
-                        <p style="color: var(--text-muted, #888); font-size: 13px;">Задач пока нет</p>
-                    </div>
+                    <button type="submit" class="tab-btn active"
+                        style="background: linear-gradient(135deg, #38bdf8, #3b82f6); color: #0f172a; font-weight: 700; border: none; padding: 10px 20px; border-radius: 10px; cursor: pointer; transition: all 0.2s ease;">
+                        + Добавить
+                    </button>
+                </form>
+            </div>
+
+            <!-- Список всех задач -->
+            <div class="todo-card">
+                <div id="assigned-tasks-container" style="display: flex; flex-direction: column;">
+                    <p style="color: #64748b; text-align: center; padding: 20px 0;">Задач пока нет</p>
                 </div>
             </div>
         </section>
